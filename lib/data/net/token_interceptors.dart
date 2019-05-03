@@ -32,10 +32,10 @@ class TokenInterceptors extends InterceptorsWrapper {
     return response;
   }
 
-  getAuthCode() async {
-    String token = await LocalStorage.getObject(ConstRes.TOKEN_KEY);
+  getAuthCode() {
+    String token = LocalStorage.getObject(ConstRes.TOKEN_KEY);
     if(token.isEmpty){
-      String basic = await LocalStorage.getObject(ConstRes.BASE_CODE_KEY);
+      String basic = LocalStorage.getObject(ConstRes.BASE_CODE_KEY);
       if (basic.isEmpty) {
         //TODO 去登录界面
       } else {

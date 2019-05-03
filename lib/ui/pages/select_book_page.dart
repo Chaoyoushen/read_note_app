@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:readnote/data/net/dio_util.dart';
 import 'package:readnote/models/book_info_model.dart';
 import 'package:readnote/utils/notice_util.dart';
-import 'dart:io';
-import 'package:barcode_scan/barcode_scan.dart';
-import 'package:readnote/utils/utils.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 
 

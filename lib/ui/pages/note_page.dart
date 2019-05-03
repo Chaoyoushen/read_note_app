@@ -20,10 +20,8 @@ class _NotePageState extends State<NotePage> {
 
   String _digest;
   TextEditingController _noteController;
-  TextEditingController _bookController;
-  TextEditingController _capController;
   BookInfoModel _book;
-  String _bookname= '';
+  String _bookName= '';
 
 
   @override
@@ -117,7 +115,7 @@ class _NotePageState extends State<NotePage> {
                       Container(
                         width: 200,
                         child: Text(
-                          _bookname,
+                          _bookName,
                           textAlign:TextAlign.right
                         ),
                       ),
@@ -130,7 +128,7 @@ class _NotePageState extends State<NotePage> {
                               }
                               setState(() {
                                 _book = _result;
-                                _bookname = _book.bookName;
+                                _bookName = _book.bookName;
                               });
                             }
                         );},

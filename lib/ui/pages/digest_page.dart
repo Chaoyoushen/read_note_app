@@ -104,7 +104,7 @@ class _DigestPageState extends State<DigestPage> {
     addNote(text);
   }
 
-  String getText(String str){
+  getText(String str){
      addNote(utf8.decode(base64Url.decode(str)));
   }
 

@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'ui/pages/login_page.dart';
 import 'package:readnote/res/intlres.dart';
 import 'package:fluintl/fluintl.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:readnote/ui/pages/register_page.dart';
-import 'package:readnote/ui/pages/splash_page.dart';
 import 'package:fluro/fluro.dart';
 import 'common/routes.dart';
 import 'common/local_storage.dart';
-import 'dart:io';
-import 'package:flutter/services.dart';
+
 
 void main() {
   loadAsync();

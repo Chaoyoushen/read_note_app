@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:readnote/ui/pages/register_page.dart';
 import 'package:fluintl/fluintl.dart';
 import 'package:readnote/res/intlres.dart';
 import 'package:fluro/fluro.dart';

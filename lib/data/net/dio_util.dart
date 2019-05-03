@@ -1,4 +1,4 @@
-import 'dart:convert';
+
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -13,7 +13,7 @@ import 'package:readnote/utils/notice_util.dart';
 
 class DioUtil {
   static final debug = false;
-  static BuildContext context = null;
+  static BuildContext context;
   /// 服务器路径
   static final host = 'http://192.168.2.8:7002';
   ///调用api资源

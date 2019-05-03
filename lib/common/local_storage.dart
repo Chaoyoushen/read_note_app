@@ -1,7 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:synchronized/synchronized.dart';
 import 'dart:async';
-import 'dart:convert';
 
 class LocalStorage{
 

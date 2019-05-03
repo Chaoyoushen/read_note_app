@@ -40,12 +40,50 @@ class _CheckNotePageState extends State<CheckNotePage> {
         ],
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 22.0),
-        height: 500,
+        padding: EdgeInsets.symmetric(horizontal: 22.0,vertical: 15.0),
+        height: 550,
         width: 500,
         child: Card(
-          color: Colors.pink,
+          color: Colors.white,
           elevation: 2,
+          child:Padding(
+              padding: EdgeInsets.all(8.0),
+              child:Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(
+                height: 100,
+                child: Text(
+                  'dest',
+                  textAlign: TextAlign.start,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Divider(
+                color: Colors.black,
+              ),
+              SizedBox(
+                height: 330,
+                child: Text(
+                  'note',
+                  textAlign: TextAlign.start,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Divider(
+                color: Colors.grey,
+              ),
+              SizedBox(
+                child: Text(
+                  'dest',
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          )
         ),
       )
     );
