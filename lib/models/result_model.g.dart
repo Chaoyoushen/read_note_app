@@ -7,8 +7,8 @@ part of 'result_model.dart';
 // **************************************************************************
 
 ResultModel<T> _$ResultModelFromJson<T>(Map<String, dynamic> json) {
-  return ResultModel<T>(json['code'] as int, json['message'] as String,
-      json['data'] as Map<String, dynamic>);
+  return ResultModel<T>(
+      json['code'] as int, json['message'] as String, json['data']);
 }
 
 Map<String, dynamic> _$ResultModelToJson<T>(ResultModel<T> instance) =>

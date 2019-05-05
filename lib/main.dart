@@ -5,17 +5,18 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:fluro/fluro.dart';
 import 'common/routes.dart';
 import 'common/local_storage.dart';
+import 'package:readnote/res/constres.dart';
 
 
 void main() {
   loadAsync();
   routerConf();
   runApp(MyApp());
-  //setStatusBar();
 }
 
 loadAsync() async {
   await LocalStorage.getInstance();
+  await LocalStorage.putString(ConstRes.USER_ID, ConstRes.USER_ID_VALUES);
 }
 
 

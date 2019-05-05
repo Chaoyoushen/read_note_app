@@ -171,7 +171,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void forSave(BuildContext context) {
-      print("phone:"+_userPhoneController.text+", password:"+_userPasswordController.text);
+      String phone = _userPhoneController.text;
+      String password = _userPasswordController.text;
+      print("phone:"+phone+", password:"+password);
       Routes.router.navigateTo(context, '/homePage',transition: TransitionType.fadeIn,clearStack: true);
   }
 }

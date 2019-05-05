@@ -1,25 +1,32 @@
 import 'dart:convert';
+import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:readnote/common/local_storage.dart';
 import 'package:readnote/common/routes.dart';
 import 'package:readnote/models/book_info_model.dart';
+import 'package:readnote/models/note_model.dart';
+import 'package:readnote/res/constres.dart';
 
 class NotePage extends StatefulWidget {
-  final String _digest;
-  NotePage(this._digest);
+  final String _codes;
+  NotePage(this._codes);
   @override
-  _NotePageState createState() => _NotePageState(_digest);
+  _NotePageState createState() => _NotePageState(_codes);
 }
 
 
 
 class _NotePageState extends State<NotePage> {
-  _NotePageState(String digest){
-    _digest = utf8.decode(base64Url.decode(digest));
+  _NotePageState(String _codes){
+    _uuid = utf8.decode(base64Url.decode(_codes));
+    _note = NoteModel.fromJson(json.decode(LocalStorage.getObject(_uuid)));
+    LocalStorage.remove(_uuid);
   }
 
-
-  String _digest;
+  String _uuid;
+  NoteModel _note;
   TextEditingController _noteController;
+  TextEditingController _pageController;
   BookInfoModel _book;
   String _bookName= '';
 
@@ -27,10 +34,10 @@ class _NotePageState extends State<NotePage> {
   @override
   void initState() {
     _noteController = new TextEditingController();
+    _pageController = new TextEditingController();
     super.initState();
 
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +68,7 @@ class _NotePageState extends State<NotePage> {
                     fontSize: 18
                 ),
               ),
-              onPressed: (){Routes.router.navigateTo(context, '/checkNotePage');},
+              onPressed: (){checkNote(context);},
             )
           ],
         ),
@@ -121,7 +128,7 @@ class _NotePageState extends State<NotePage> {
                       ),
                       IconButton(
                         icon: Icon(Icons.keyboard_arrow_right),
-                        onPressed: (){Routes.router.navigateTo(context, '/selectBookPage').then(
+                        onPressed: (){Routes.router.navigateTo(context, '/selectBookPage',transition: TransitionType.inFromRight).then(
                             (_result){
                               if(_result == null){
                                 return;
@@ -150,6 +157,7 @@ class _NotePageState extends State<NotePage> {
                     Container(
                       width: 60,
                       child: TextField(
+                          controller: _pageController,
                           enabled: true,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -197,5 +205,17 @@ class _NotePageState extends State<NotePage> {
         )
     );
   }
+
+  checkNote(BuildContext context)async{
+    _note.bookName = _book.bookName;
+    _note.bookId = _book.bookId;
+    _note.userId = LocalStorage.getObject(ConstRes.USER_ID);
+    _note.note = _noteController.text;
+    _note.page = _pageController.text;
+    await LocalStorage.putString(_uuid, json.encode(_note.toJson()));
+    String codes = base64Url.encode(utf8.encode(_uuid));
+    Routes.router.navigateTo(context, '/checkNotePage?uuid=$codes',transition: TransitionType.inFromRight);
+  }
+
 
 }

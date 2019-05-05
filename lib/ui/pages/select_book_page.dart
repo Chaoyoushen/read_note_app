@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:readnote/data/net/dio_util.dart';
 import 'package:readnote/models/book_info_model.dart';
 import 'package:readnote/utils/notice_util.dart';
+import 'package:readnote/utils/utils.dart';
 
 
 
@@ -36,7 +37,7 @@ class _SelectBookPageState extends State<SelectBookPage> {
                 IconData(0xe6b9,fontFamily: 'iconfont'),
                 color: Color(0xFFAD9A87),
               ),
-              onPressed: (){_buildScanButton();}
+              onPressed: (){Utils.scanBookInfo(context);}
           )
         ],
       ),
@@ -66,17 +67,5 @@ class _SelectBookPageState extends State<SelectBookPage> {
     return ListView();
   }
 
-  _buildScanButton()async{
-    //String barcode = await BarcodeScanner.scan();
-    String barcode = '9787534155550';
-    print(barcode);
-    BookInfoModel book = await DioUtil.getBookByIsbn(barcode);
-    print(book);
-    if(book == null){
-      return NoticeUtil.buildToast("no such book,try use name");
-    }else{
-      Navigator.pop(context,book);
-    }
-  }
 }
 

@@ -1,11 +1,32 @@
+import 'dart:convert';
+
+import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:readnote/common/local_storage.dart';
+import 'package:readnote/common/routes.dart';
+import 'package:readnote/data/net/dio_util.dart';
+import 'package:readnote/models/note_model.dart';
+import 'package:readnote/ui/widget/loading_dialog.dart';
 
 class CheckNotePage extends StatefulWidget {
+  final String _codes;
+  CheckNotePage(this._codes);
   @override
-  _CheckNotePageState createState() => _CheckNotePageState();
+  _CheckNotePageState createState() => _CheckNotePageState(_codes);
 }
 
 class _CheckNotePageState extends State<CheckNotePage> {
+  _CheckNotePageState(String codes){
+    _uuid = utf8.decode(base64Url.decode(codes));
+    _note = NoteModel.fromJson(json.decode(LocalStorage.getObject(_uuid)));
+    print(_note.toJson().toString());
+  }
+
+  String _uuid;
+  NoteModel _note;
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +56,7 @@ class _CheckNotePageState extends State<CheckNotePage> {
                   fontSize: 18
               ),
             ),
-            onPressed: (){},
+            onPressed: (){onComplete();},
           )
         ],
       ),
@@ -55,8 +76,9 @@ class _CheckNotePageState extends State<CheckNotePage> {
               SizedBox(
                 height: 100,
                 child: Text(
-                  'dest',
+                  _note.digest,
                   textAlign: TextAlign.start,
+                  maxLines: 5,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -66,7 +88,8 @@ class _CheckNotePageState extends State<CheckNotePage> {
               SizedBox(
                 height: 330,
                 child: Text(
-                  'note',
+                  _note.note,
+                  maxLines: 15,
                   textAlign: TextAlign.start,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -76,9 +99,12 @@ class _CheckNotePageState extends State<CheckNotePage> {
               ),
               SizedBox(
                 child: Text(
-                  'dest',
+                  '第'+_note.page+'页/《'+_note.bookName+'》',
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.grey
+                  ),
                 ),
               ),
             ],
@@ -87,6 +113,19 @@ class _CheckNotePageState extends State<CheckNotePage> {
         ),
       )
     );
+  }
+  onComplete()async{
+    showDialog<Null>(
+        context: context, //BuildContext对象
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return new LoadingDialog( //调用对话框
+            text: '正在上传...',
+          );
+        });
+    await DioUtil.saveNote(_note);
+    Navigator.pop(context);
+    Routes.router.navigateTo(context, '/homePage',clearStack: true,transition: TransitionType.fadeIn);
   }
 }
 

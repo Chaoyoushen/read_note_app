@@ -4,6 +4,8 @@ class ConstRes{
   static const PWD_KEY = "userPwd";
   static const PHONE_KEY = "userPhone";
   static const BASE_CODE_KEY = "userBaseCode";
+  static const USER_ID = "userId";
+  static const USER_ID_VALUES ="123456";
 
 
   ///access_token

@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:readnote/common/local_storage.dart';
 import 'package:readnote/common/routes.dart';
 import 'package:readnote/models/add_note_type.dart';
+import 'package:readnote/models/note_model.dart';
 import 'package:readnote/utils/camera_util.dart';
 import 'package:fluro/fluro.dart';
+import 'package:uuid/uuid.dart';
 
 class DigestPage extends StatefulWidget {
 
@@ -28,6 +31,8 @@ class _DigestPageState extends State<DigestPage> {
       _type = AddNoteType.normal;
     }
   }
+
+  NoteModel _note;
 
   AddNoteType _type;
 
@@ -76,8 +81,7 @@ class _DigestPageState extends State<DigestPage> {
               ),
             ),
             onPressed: (){
-              String codes = base64Url.encode(utf8.encode(_digestController.text));
-              Routes.router.navigateTo(context, '/notePage?digest=$codes',transition: TransitionType.inFromRight);
+              setDigest(context);
               },
           )   
         ],
@@ -203,4 +207,14 @@ class _DigestPageState extends State<DigestPage> {
       _digestNum = number;
     });
   }
+
+  setDigest(BuildContext context) async{
+    String uuid = new Uuid().v1();
+    _note = new NoteModel('','','','','','','');
+    _note.digest = _digestController.text;
+    await LocalStorage.putString(uuid, json.encode(_note.toJson()));
+    String codes = base64Url.encode(utf8.encode(uuid));
+    Routes.router.navigateTo(context, '/notePage?uuid=$codes',transition: TransitionType.inFromRight);
+  }
+
 }

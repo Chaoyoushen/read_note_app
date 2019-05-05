@@ -58,9 +58,9 @@ var digestHandler = Handler(
 
 var noteHandler = Handler(
     handlerFunc: (BuildContext context, Map<String,List<String>> params){
-      //var digest = params['digest']?.first;
+      var uuid = params['uuid']?.first;
       return NotePage(
-        ''
+        uuid
       );
     }
 );
@@ -74,7 +74,9 @@ var selectBookHandler = Handler(
 
 var checkNoteHandler = Handler(
     handlerFunc: (BuildContext context, Map<String,List<String>> params){
-      //var digest = params['digest']?.first;
-      return CheckNotePage();
+      var uuid = params['uuid']?.first;
+      return CheckNotePage(
+        uuid
+      );
     }
 );

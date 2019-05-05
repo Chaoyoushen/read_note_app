@@ -7,7 +7,7 @@ part 'result_model.g.dart';
 class ResultModel<T>{
   final int code;
   final String message;
-  final Map<String,dynamic> data;
+  final Object data;
   ResultModel(this.code,this.message,this.data);
 
   factory ResultModel.fromJson(Map<String, dynamic> json) => _$ResultModelFromJson(json);
