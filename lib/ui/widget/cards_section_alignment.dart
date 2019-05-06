@@ -9,9 +9,9 @@ class CardsSectionAlignment extends StatefulWidget
 {
   CardsSectionAlignment(BuildContext context)
   {
-    cardsSize[0] = new Size(MediaQuery.of(context).size.width * 0.9, MediaQuery.of(context).size.height * 0.6);
-    cardsSize[1] = new Size(MediaQuery.of(context).size.width * 0.85, MediaQuery.of(context).size.height * 0.55);
-    cardsSize[2] = new Size(MediaQuery.of(context).size.width * 0.8, MediaQuery.of(context).size.height * 0.5);
+    cardsSize[0] = new Size(MediaQuery.of(context).size.width * 0.90, MediaQuery.of(context).size.height * 0.78);
+    cardsSize[1] = new Size(MediaQuery.of(context).size.width * 0.85, MediaQuery.of(context).size.height * 0.75);
+    cardsSize[2] = new Size(MediaQuery.of(context).size.width * 0.8, MediaQuery.of(context).size.height * 0.7);
   }
 
   @override
@@ -20,6 +20,8 @@ class CardsSectionAlignment extends StatefulWidget
 
 class _CardsSectionState extends State<CardsSectionAlignment> with SingleTickerProviderStateMixin
 {
+
+  ///记录划过的卡片数量
   int cardsCounter = 0;
 
   List<ProfileCardAlignment> cards = new List();
@@ -54,8 +56,7 @@ class _CardsSectionState extends State<CardsSectionAlignment> with SingleTickerP
   @override
   Widget build(BuildContext context)
   {
-    return new Expanded
-      (
+    return new Expanded(
         child: new Stack
           (
           children: <Widget>

@@ -10,74 +10,107 @@ import 'package:readnote/utils/camera_util.dart';
 class MakeNoteWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        SizedBox(
-          height: 10,
-        ),
-        Center(
-          child: Text(
-            IntlUtil.getString(context, Ids.sheetTitle),
-            style: TextStyle(
-              color: Colors.black,
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 18),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             GestureDetector(
             onTap: ()=>_onImageButtonPressed(context),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Icon(
-                  IconData(0xe6ba,fontFamily: 'iconfont'),
-                  size: 50,
+                Container(
+                  height:50,
+                  width: 50,
+                  margin: const EdgeInsets.only(bottom: 8.0),
+                  decoration: new BoxDecoration(
+                    color: Colors.blue,
+                    shape: BoxShape.rectangle,              // <-- 这里需要设置为 rectangle
+                    borderRadius: new BorderRadius.all(
+                      const Radius.circular(25.0),        // <-- rectangle 时，BorderRadius 才有效
+                    ),
                   ),
+                  child: Icon(
+                    IconData(0xe665,fontFamily: 'iconfont'),
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
                 Text(
                   IntlUtil.getString(context, Ids.takePhoto),
+                  style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.grey
+                  ),
                 )
               ],
             )),
-            SizedBox(
-              width: 65,
-            ),
             GestureDetector(
               onTap: () =>_onGalleryButtonPressed(context),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Icon(
-                  IconData(0xe613,fontFamily: 'iconfont'),
-                  size: 50,
+                Container(
+                  height:50,
+                  width: 50,
+                  margin: const EdgeInsets.only(bottom: 8.0),
+                  decoration: new BoxDecoration(
+                    color: Colors.blue,
+                    shape: BoxShape.rectangle,              // <-- 这里需要设置为 rectangle
+                    borderRadius: new BorderRadius.all(
+                      const Radius.circular(25.0),        // <-- rectangle 时，BorderRadius 才有效
+                    ),
+                  ),
+                  child: Icon(
+                    IconData(0xe69b,fontFamily: 'iconfont'),
+                    color: Colors.white,
+                    size: 30,
+                  ),
                 ),
                 Text(
                   IntlUtil.getString(context, Ids.selectPhoto),
+                  style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.grey
+                  ),
                 )
               ],
             )),
-            SizedBox(
-              width: 65,
-            ),
           GestureDetector(
             onTap: (){Routes.router.navigateTo(context, '/digestPage?text=&type=',transition: TransitionType.fadeIn);},
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Icon(
-                  IconData(0xe7dd,fontFamily: 'iconfont'),
-                  size: 50,
+                Container(
+                  height:50,
+                  width: 50,
+                  margin: const EdgeInsets.only(bottom: 8.0),
+                  decoration: new BoxDecoration(
+                    color: Colors.blue,
+                    shape: BoxShape.rectangle,              // <-- 这里需要设置为 rectangle
+                    borderRadius: new BorderRadius.all(
+                      const Radius.circular(25.0),        // <-- rectangle 时，BorderRadius 才有效
+                    ),
                   ),
+                  child: Icon(
+                    IconData(0xe649,fontFamily: 'iconfont'),
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
                 Text(
                   IntlUtil.getString(context, Ids.createByCustom),
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Colors.grey
+
+                  ),
                 )
               ],
             )),
           ]
         )
-      ],
     );
   }
 

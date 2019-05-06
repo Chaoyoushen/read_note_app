@@ -15,9 +15,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _pageIndex = 0;
-  final _bottomNavigationColor = Colors.black;
+  final _bottomNavigationColor = Colors.grey;
   final _textStyle = Colors.black;
-  final _appBarColor = Colors.grey[200];
+  final _appBarColor = Colors.white;
   List<Widget> pages = List<Widget>();
 
   @override
@@ -33,11 +33,12 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
             appBar: AppBar(
+              elevation: 0,
               backgroundColor: _appBarColor,
                 leading: Builder(builder: (BuildContext context) {
                 return IconButton(
-                color: Colors.black,
-                icon: const Icon(Icons.face),
+                color: Colors.grey,
+                icon: const Icon(IconData(0xe673,fontFamily: 'iconfont')),
                 onPressed: () {
                   Scaffold.of(context).openDrawer();
                 },
@@ -61,7 +62,8 @@ class _HomePageState extends State<HomePage> {
             drawer: DrawerWidget(),
             body: pages[_pageIndex],
             bottomNavigationBar: Container(
-              height: 50,
+              margin: EdgeInsets.only(top: 8),
+              height: 47,
               child: BottomNavigationBar(
                 onTap: (int index){
                   if(index == 1){
@@ -77,7 +79,7 @@ class _HomePageState extends State<HomePage> {
                   items: [
                     BottomNavigationBarItem(
                       icon: Icon(
-                        IconData(0xe62e,fontFamily: 'iconfont'),
+                        IconData(0xe736,fontFamily: 'iconfont'),
                         color: _bottomNavigationColor,
                       ),
                       title: Text(
@@ -87,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     BottomNavigationBarItem(
                       icon: Icon(
-                        IconData(0xe618,fontFamily: 'iconfont'),
+                        IconData(0xe649,fontFamily: 'iconfont'),
                         color: _bottomNavigationColor,
                       ),
                       title: Text(
@@ -97,7 +99,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     BottomNavigationBarItem(
                       icon: Icon(
-                        IconData(0xe63b,fontFamily: 'iconfont'),
+                        IconData(0xe67e,fontFamily: 'iconfont'),
                         color: _bottomNavigationColor,
                       ),
                       title: Text(
@@ -116,7 +118,7 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (BuildContext context) {
         return Container(
-          height: 150.0,
+          height: 110.0,
           color: Color(0xfff1f1f1),
           child: MakeNoteWidget()
         );

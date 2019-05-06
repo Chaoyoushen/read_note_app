@@ -34,7 +34,7 @@ class _SelectBookPageState extends State<SelectBookPage> {
         actions: <Widget>[
           IconButton(
               icon: Icon(
-                IconData(0xe6b9,fontFamily: 'iconfont'),
+                IconData(0xe689,fontFamily: 'iconfont'),
                 color: Color(0xFFAD9A87),
               ),
               onPressed: (){Utils.scanBookInfo(context);}

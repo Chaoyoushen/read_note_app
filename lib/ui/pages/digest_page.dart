@@ -210,7 +210,7 @@ class _DigestPageState extends State<DigestPage> {
 
   setDigest(BuildContext context) async{
     String uuid = new Uuid().v1();
-    _note = new NoteModel('','','','','','','');
+    _note = new NoteModel('','','','','','','',DateTime.now());
     _note.digest = _digestController.text;
     await LocalStorage.putString(uuid, json.encode(_note.toJson()));
     String codes = base64Url.encode(utf8.encode(uuid));

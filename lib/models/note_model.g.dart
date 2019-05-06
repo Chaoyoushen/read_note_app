@@ -14,7 +14,8 @@ NoteModel _$NoteModelFromJson(Map<String, dynamic> json) {
       json['digest'] as String,
       json['note'] as String,
       json['page'] as String,
-      json['bookName'] as String);
+      json['bookName'] as String,
+      json['data'] == null ? null : DateTime.parse(json['data'] as String));
 }
 
 Map<String, dynamic> _$NoteModelToJson(NoteModel instance) => <String, dynamic>{
@@ -24,5 +25,6 @@ Map<String, dynamic> _$NoteModelToJson(NoteModel instance) => <String, dynamic>{
       'digest': instance.digest,
       'note': instance.note,
       'page': instance.page,
-      'bookName': instance.bookName
+      'bookName': instance.bookName,
+      'data': instance.data?.toIso8601String()
     };

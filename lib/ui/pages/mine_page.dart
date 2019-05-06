@@ -40,7 +40,7 @@ class _MinePageState extends State<MinePage> {
                             'MORE',
                             style: TextStyle(fontSize: 12),
                           ),
-                          borderSide: BorderSide(color: Color(0xFFAD9A87)),
+                          borderSide: BorderSide(color: Color(0xFFFFFF)),
                         ),
                       )
                     ],
@@ -93,12 +93,6 @@ class _MinePageState extends State<MinePage> {
               ),
             )),
           ),
-          Padding(
-            padding: EdgeInsets.only(left: 10, right: 10),
-            child: Divider(
-              color: Colors.grey,
-            ),
-          ),
           SizedBox(
             height: 300,
             child: Card(
@@ -121,7 +115,7 @@ class _MinePageState extends State<MinePage> {
                                 'MORE',
                                 style: TextStyle(fontSize: 12),
                               ),
-                              borderSide: BorderSide(color: Color(0xFFAD9A87)),
+                              borderSide: BorderSide(color: Color(0xFFFFFF)),
                             ),
                           )
                         ],
