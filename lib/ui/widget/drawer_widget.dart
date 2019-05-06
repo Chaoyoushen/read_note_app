@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:readnote/common/local_storage.dart';
+import 'package:readnote/common/routes.dart';
+import 'package:readnote/data/net/dio_util.dart';
+import 'package:readnote/res/constres.dart';
+import 'package:readnote/ui/widget/loading_dialog.dart';
+import 'package:readnote/utils/notice_util.dart';
 import 'package:readnote/utils/utils.dart';
 
 class DrawerWidget extends StatefulWidget {
@@ -15,7 +21,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             children: <Widget>[
               UserAccountsDrawerHeader(
                 accountEmail: Text('mathcnaaa@gmail.com'),
-                accountName: Text('chaoyous'),
+                accountName: Text(LocalStorage.getObject(ConstRes.USER_NAME_KEY)),
                 currentAccountPicture: CircleAvatar(
                   backgroundImage: AssetImage(
                       Utils.getImgPath('header')
@@ -49,10 +55,29 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               ListTile(
                 title: Text('注销'),
                 trailing: Icon(Icons.exit_to_app),
-                onTap: (){},
+                onTap: (){logout(context);},
               ),
             ],
           ),
         );
+  }
+
+  logout(BuildContext context)async{
+    showDialog<Null>(
+        context: context, //BuildContext对象
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return new LoadingDialog( //调用对话框
+            text: '正在注销...',
+          );
+        });
+    bool flag = await DioUtil.logout();
+    Navigator.pop(context);
+    NoticeUtil.buildToast('logout success');
+    if(flag){
+      Routes.router.navigateTo(context, '/loginPage',clearStack: true);
+    }else{
+      NoticeUtil.buildToast('logout failed');
+    }
   }
 }

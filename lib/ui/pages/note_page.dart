@@ -6,6 +6,7 @@ import 'package:readnote/common/routes.dart';
 import 'package:readnote/models/book_info_model.dart';
 import 'package:readnote/models/note_model.dart';
 import 'package:readnote/res/constres.dart';
+import 'package:readnote/utils/notice_util.dart';
 
 class NotePage extends StatefulWidget {
   final String _codes;
@@ -207,6 +208,10 @@ class _NotePageState extends State<NotePage> {
   }
 
   checkNote(BuildContext context)async{
+    if(_book == null){
+      NoticeUtil.buildToast('please select a book');
+      return;
+    }
     _note.bookName = _book.bookName;
     _note.bookId = _book.bookId;
     _note.userId = LocalStorage.getObject(ConstRes.USER_ID);

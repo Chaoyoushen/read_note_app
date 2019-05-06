@@ -124,6 +124,7 @@ class _CheckNotePageState extends State<CheckNotePage> {
           );
         });
     await DioUtil.saveNote(_note);
+    await LocalStorage.remove(_uuid);
     Navigator.pop(context);
     Routes.router.navigateTo(context, '/homePage',clearStack: true,transition: TransitionType.fadeIn);
   }

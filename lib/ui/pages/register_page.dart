@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fluintl/fluintl.dart';
+import 'package:readnote/data/net/dio_util.dart';
 import 'package:readnote/res/intlres.dart';
 import 'package:fluro/fluro.dart';
 import 'package:readnote/common/routes.dart';
+import 'package:readnote/ui/widget/loading_dialog.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -10,17 +12,15 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _formKey = GlobalKey<FormState>();
-  String _phone, _password;
   bool _isObscure = true;
   Color _eyeColor;
-
+  TextEditingController _phoneController = new TextEditingController();
+  TextEditingController _passwordController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Form(
-            key: _formKey,
             child: ListView(
               padding: EdgeInsets.symmetric(horizontal: 22.0),
               children: <Widget>[
@@ -37,7 +37,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 buildRegisterButton(context),
                 SizedBox(height: 30.0),
                 buildLoginText(context),
-                //buildCheckBox(concext),
               ],
             )));
   }
@@ -57,8 +56,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 style: TextStyle(color: Colors.green),
               ),
               onTap: () {
-                //TODO 跳转到登录页面
-                print('去登录');
                 Routes.router.navigateTo(context, '/loginPage',clearStack: true,transition: TransitionType.fadeIn);
               },
             ),
@@ -80,13 +77,7 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           color: Colors.black,
           onPressed: () {
-            if (_formKey.currentState.validate()) {
-              //只有输入的内容符合要求通过才会到达此处
-              _formKey.currentState.save();
-              //TODO 执行登录方法
-              Routes.router.navigateTo(context, '/homePage',clearStack: true,transition: TransitionType.fadeIn);
-              print('phone:$_phone , password:$_password');
-            }
+            register();
           },
           shape: StadiumBorder(side: BorderSide()),
         ),
@@ -96,7 +87,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   TextFormField buildPasswordTextField(BuildContext context) {
     return TextFormField(
-      onSaved: (String value) => _password = value,
+      controller: _passwordController,
       obscureText: _isObscure,
       validator: (String value) {
         if (value.isEmpty) {
@@ -123,6 +114,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   TextFormField buildPhoneTextFiled(){
       return TextFormField(
+        controller: _phoneController,
       keyboardType: TextInputType.numberWithOptions(),
       decoration: InputDecoration(
         labelText: IntlUtil.getString(context, Ids.phoneInputText),
@@ -134,7 +126,6 @@ class _RegisterPageState extends State<RegisterPage> {
           return IntlUtil.getString(context, Ids.phoneInputNotice);
         }
       },
-      onSaved: (String value) => _phone = value,
     );
   }
 
@@ -162,4 +153,22 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
     );
   }
+
+  void register()async{
+      String phone = _phoneController.text;
+      String password = _passwordController.text;
+      showDialog<Null>(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return new LoadingDialog(
+              text: '正在注册...',
+            );
+          });
+      bool flag = await DioUtil.register(phone, password);
+      Navigator.pop(context);
+      if(flag){
+        Routes.router.navigateTo(context, '/homePage',transition: TransitionType.fadeIn,clearStack: true);
+      }
+    }
 }

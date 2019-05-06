@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:readnote/data/net/dio_util.dart';
 import 'package:readnote/res/intlres.dart';
 import 'package:fluintl/fluintl.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -16,7 +17,6 @@ void main() {
 
 loadAsync() async {
   await LocalStorage.getInstance();
-  await LocalStorage.putString(ConstRes.USER_ID, ConstRes.USER_ID_VALUES);
 }
 
 

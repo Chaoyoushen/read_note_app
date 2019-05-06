@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:readnote/common/local_storage.dart';
+import 'package:readnote/data/net/dio_util.dart';
+import 'package:readnote/res/constres.dart';
 import 'package:readnote/utils/utils.dart';
-import 'package:rxdart/rxdart.dart';
 
 
 import 'package:fluintl/fluintl.dart';
@@ -18,8 +20,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  TimerUtil _timerUtil;
-  TransitionType _transitionType = TransitionType.inFromRight;
+  TransitionType _transitionType = TransitionType.fadeIn;
 
   List<String> _guideList = [
     Utils.getImgPath('guide1'),
@@ -65,13 +66,6 @@ class _SplashPageState extends State<SplashPage> {
     );
   }
 
-  //销毁时取消timer
-  @override
-  void dispose() {
-    super.dispose();
-    if (_timerUtil != null) _timerUtil.cancel();
-  }
-
   Widget _buildSplashBg() {
     return Image.asset(
       Utils.getImgPath('launch'),
@@ -82,19 +76,27 @@ class _SplashPageState extends State<SplashPage> {
     
   }
 
-  void _doDelay() async {
-    Observable.just(1).delay(Duration(milliseconds: 3000)).listen((_){
-        _initBanner();
-        print("banner init! status = $_status");
-      }  
-    );
+  void _doDelay() async{
+    await Future.delayed(Duration(milliseconds: 3000));
+    if(LocalStorage.getObject(ConstRes.TOKEN_KEY)!=null) {
+      bool flag = await DioUtil.checkLoginStatus();
+      if (flag) {
+        _goMain(context);
+      }else{
+        _goLogin(context);
+      }
+    }else{
+      _initBanner();
+    }
   }
 
-  void _goMain(BuildContext context,) {
-    //TODO 增加判断是否需要登录
-
-    Routes.router.navigateTo(context, "/loginPage",transition: _transitionType,clearStack: true);
+  void _goMain(BuildContext context) {
+    Routes.router.navigateTo(context, "/homePage",transition: _transitionType,clearStack: true);
   }
+
+    void _goLogin(BuildContext context) {
+      Routes.router.navigateTo(context, "/loginPage",transition: _transitionType,clearStack: true);
+    }
 
   void _initBanner() {  
     _initBannerData();
@@ -119,7 +121,7 @@ class _SplashPageState extends State<SplashPage> {
               margin: EdgeInsets.all(30.0),
               child: InkWell(
                 onTap: () {
-                  _goMain(context);
+                  _goLogin(context);
                 },
                 child: new Container(
                     padding: EdgeInsets.all(12.0),

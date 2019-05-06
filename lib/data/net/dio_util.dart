@@ -5,8 +5,11 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:readnote/common/local_storage.dart';
+import 'package:readnote/common/routes.dart';
 import 'package:readnote/models/book_info_model.dart';
+import 'package:readnote/models/explore_model.dart';
 import 'package:readnote/models/image_result.dart';
+import 'package:readnote/models/login_model.dart';
 import 'package:readnote/models/note_model.dart';
 import 'package:readnote/models/result_model.dart';
 import 'package:readnote/res/constres.dart';
@@ -17,30 +20,38 @@ class DioUtil {
   static final debug = false;
   static BuildContext context;
   /// 服务器路径
-  static final host = 'http://192.168.2.11:7002';
+  static final host = 'http://192.168.2.13:7002';
   ///调用api资源
   static final baiduHost = 'https://aip.baidubce.com/rest/2.0/ocr/v1';
   ///用户向服务请求识别某张图中的所有文字,通用文字识别
   static final generalBasic = '/general_basic';
 
+  static Options _option;
   static Dio _dio = new Dio();
-
-
-  static String token;
-
   static final LogicError unknowError = LogicError(-1, "未知异常");
 
 
-  ///获取授权token
-  static getToken() {
+
+  static Options getOption(){
     String token = LocalStorage.getObject(ConstRes.TOKEN_KEY);
-    return token;
+    print(token);
+    if(_option == null){
+      _option = new Options();
+    }
+    _option.headers.addAll({'token':token});
+    print(_option.headers);
+    return _option;
   }
+
+
+
+
+
 
   static void getBaiduAIToken() async {
     String path = host+'/baidu/token';
     Response response = await _dio.get(path);
-    String baiduToken = response.data;
+    String baiduToken = response.data['token'];
     print(baiduToken);
   }
 
@@ -48,24 +59,28 @@ class DioUtil {
 
     try{
       String path = host+'/search/isbn?isbn=';
-      final Response response = await _dio.get(path+isbn);
+      final Response response = await _dio.get(path+isbn,options: getOption());
       print(response.data);
       ResultModel model = ResultModel.fromJson(response.data);
-      print(model);
-      Map tmp = model.data;
-      print('tmp='+tmp.toString());
-      BookInfoModel book = BookInfoModel.fromJson(tmp['book']);
-      if(book.isbn == ''||book.isbn == null){
-        return null;
+      if(model.code == 200){
+        Map tmp = model.data;
+        print('tmp='+tmp.toString());
+        BookInfoModel book = BookInfoModel.fromJson(tmp['book']);
+        if(book.isbn == ''||book.isbn == null){
+          return null;
+        }else{
+          return book;
+        }
       }else{
-        return book;
+        if(!tokenExpireFlag(model)){
+          NoticeUtil.buildToast("unknow error");
+        }
+        return null;
       }
     }catch(e){
       NoticeUtil.buildToast("some thing wrong with net");
       return null;
     }
-
-
   }
 
 
@@ -91,7 +106,8 @@ class DioUtil {
       print(json.encode(data));
       final Response response = await _dio.post(
         path,
-        data: json.encode(data)
+        data: json.encode(data),
+        options: getOption()
       );
       print(response.data);
       ResultModel model = ResultModel.fromJson(response.data);
@@ -100,13 +116,141 @@ class DioUtil {
       }else if(model.data == 1005){
         NoticeUtil.buildToast("some thing wrong with insert");
       }else{
-        NoticeUtil.buildToast("some thing wrong with net");
+        if(!tokenExpireFlag(model)){
+          NoticeUtil.buildToast("unknow error");
+        }
       }
     }catch(e){
       print(e);
-      NoticeUtil.buildToast("some thing wrong");
+      NoticeUtil.buildToast("some thing wrong with net");
     }
   }
+
+  static Future<bool> login(String phone,String password)async{
+    Map data = {'phone':phone,'password':password};
+    try{
+      String path = host+'/user/login';
+      final Response response = await _dio.post(
+          path,
+          data:json.encode(data),
+      );
+      ResultModel model = ResultModel.fromJson(response.data);
+      if(model.code == 200){
+        NoticeUtil.buildToast("login success");
+        print(response.data);
+        LoginModel login = LoginModel.fromJson(response.data['data']);
+        await LocalStorage.putString(ConstRes.TOKEN_KEY, login.token);
+        await LocalStorage.putString(ConstRes.USER_ID, login.userId);
+        await LocalStorage.putString(ConstRes.USER_NAME_KEY, login.nickName);
+        return true;
+      }if(model.code == 501) {
+        NoticeUtil.buildToast("redis server error");
+      }
+        if(model.data == 1001){
+          NoticeUtil.buildToast("wrong phone or password");
+        }else{
+          if(!tokenExpireFlag(model)){
+            NoticeUtil.buildToast("unknow error");
+          }
+        }
+        return false;
+      }catch(e){
+      print(e.toString());
+      NoticeUtil.buildToast("some thing wrong with net");
+      return false;
+    }
+  }
+
+  static Future<bool> register(String phone,String password)async{
+    try{
+      Map data = {'phone':phone,'password':password};
+      String path = host+'/user/register';
+      final Response response = await _dio.post(
+          path,
+          data:json.encode(data)
+      );
+      ResultModel model = ResultModel.fromJson(response.data);
+      if(model.code == 200){
+        NoticeUtil.buildToast("register success");
+        print(response.data);
+        LoginModel login = LoginModel.fromJson(response.data['data']);
+        print(response.data);
+        print(login.nickName);
+        await LocalStorage.putString(ConstRes.TOKEN_KEY, login.token);
+        await LocalStorage.putString(ConstRes.USER_ID, login.userId);
+        await LocalStorage.putString(ConstRes.USER_NAME_KEY, login.nickName);
+        print(LocalStorage.getObject(ConstRes.USER_NAME_KEY));
+        return true;
+      }if(model.data == 1002){
+        NoticeUtil.buildToast("register failed");
+      }else{
+        if(!tokenExpireFlag(model)){
+          NoticeUtil.buildToast("unknow error");
+        }
+      }
+      return false;
+    }catch(e){
+      NoticeUtil.buildToast("some thing wrong with net");
+      return false;
+    }
+  }
+
+  static bool tokenExpireFlag(ResultModel model){
+    if(model.data == 501){
+      NoticeUtil.buildToast("token expire");
+      Routes.router.navigateTo(context,'/loginPage',clearStack: true);
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  static Future<bool> logout()async{
+    try{
+      String path = host + '/user/logout';
+      final Response response = await _dio.get(path,options: getOption());
+      ResultModel model = ResultModel.fromJson(response.data);
+      if(model.code == 200){
+        NoticeUtil.buildToast("logout success");
+        await LocalStorage.remove(ConstRes.TOKEN_KEY);
+        await LocalStorage.remove(ConstRes.USER_ID);
+        await LocalStorage.remove(ConstRes.USER_NAME_KEY);
+        return true;
+      }if(model.data == 3000){
+        NoticeUtil.buildToast("redis error");
+      }else{
+        if(!tokenExpireFlag(model)){
+          NoticeUtil.buildToast("unknow error");
+        }
+      }
+      return false;
+    }catch(e){
+      NoticeUtil.buildToast("net error");
+      print(e);
+      return false;
+    }
+
+  }
+
+  static Future<bool> checkLoginStatus()async{
+    String path = host + '/user/check';
+    Response response = await _dio.get(path,options: getOption());
+    ResultModel model = ResultModel.fromJson(response.data);
+    if(model.code == 200){
+      return true;
+    }else{
+      tokenExpireFlag(model);
+      return false;
+    }
+  }
+
+  static Future<ExploreModel> getExploreModel(int current,int num)async{
+    String path = host + '/explore/get?';
+    Response response = await _dio.get(path+'current=$current&num=$num',options: getOption());
+    ResultModel model = ResultModel.fromJson(response.data);
+    print(model.data);
+  }
+
 }
 
 

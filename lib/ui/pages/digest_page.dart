@@ -6,6 +6,7 @@ import 'package:readnote/models/add_note_type.dart';
 import 'package:readnote/models/note_model.dart';
 import 'package:readnote/utils/camera_util.dart';
 import 'package:fluro/fluro.dart';
+import 'package:readnote/utils/utils.dart';
 import 'package:uuid/uuid.dart';
 
 class DigestPage extends StatefulWidget {
@@ -210,7 +211,7 @@ class _DigestPageState extends State<DigestPage> {
 
   setDigest(BuildContext context) async{
     String uuid = new Uuid().v1();
-    _note = new NoteModel('','','','','','','',DateTime.now());
+    _note = new NoteModel('','','','','','','',DateTime.now().millisecondsSinceEpoch.toString());
     _note.digest = _digestController.text;
     await LocalStorage.putString(uuid, json.encode(_note.toJson()));
     String codes = base64Url.encode(utf8.encode(uuid));

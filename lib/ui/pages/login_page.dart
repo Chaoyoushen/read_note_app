@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fluintl/fluintl.dart';
+import 'package:readnote/data/net/dio_util.dart';
 import 'package:readnote/res/intlres.dart';
 import 'package:fluro/fluro.dart';
 import 'package:readnote/common/routes.dart';
+import 'package:readnote/ui/widget/loading_dialog.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -10,7 +12,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String _phone, _password;
   bool _isObscure = true;
   Color _eyeColor;
 
@@ -170,10 +171,23 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void forSave(BuildContext context) {
+  void forSave(BuildContext context) async{
       String phone = _userPhoneController.text;
       String password = _userPasswordController.text;
       print("phone:"+phone+", password:"+password);
-      Routes.router.navigateTo(context, '/homePage',transition: TransitionType.fadeIn,clearStack: true);
+      showDialog<Null>(
+          context: context, //BuildContext对象
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return new LoadingDialog( //调用对话框
+              text: '正在登录...',
+            );
+          });
+      bool flag = await DioUtil.login(phone, password);
+      Navigator.pop(context);
+      if(flag){
+        Routes.router.navigateTo(context, '/homePage',transition: TransitionType.fadeIn,clearStack: true);
+      }
+
   }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:readnote/data/net/dio_util.dart';
 import 'package:readnote/utils/utils.dart';
+import 'package:readnote/common/routes.dart';
+import 'package:fluro/fluro.dart';
 
 class MinePage extends StatefulWidget {
   @override
@@ -7,8 +10,6 @@ class MinePage extends StatefulWidget {
 }
 
 class _MinePageState extends State<MinePage> {
-  BoxConstraints _boxConstraints =
-      const BoxConstraints(maxHeight: 50, maxWidth: 40);
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +109,9 @@ class _MinePageState extends State<MinePage> {
                             height: 18,
                             width: 70,
                             child: OutlineButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                DioUtil.getExploreModel(1,1);
+                                },
                               splashColor: Color(0xFFAD9A87),
                               highlightedBorderColor: Color(0xFFAD9A87),
                               child: Text(

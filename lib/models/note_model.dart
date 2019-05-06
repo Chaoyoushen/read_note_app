@@ -12,8 +12,8 @@ class NoteModel{
     String note;
     String page;
     String bookName;
-    DateTime data;
-    NoteModel(this.userId,this.noteId,this.bookId,this.digest,this.note,this.page,this.bookName,this.data);
+    String createDate;
+    NoteModel(this.userId,this.noteId,this.bookId,this.digest,this.note,this.page,this.bookName,this.createDate);
 
     factory NoteModel.fromJson(Map<String, dynamic> json) => _$NoteModelFromJson(json);
 

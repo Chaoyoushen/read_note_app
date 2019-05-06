@@ -6,7 +6,7 @@ class NoticeUtil {
     Fluttertoast.showToast(
         msg: str,
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
+        gravity: ToastGravity.BOTTOM,
         timeInSecForIos: 1,
         backgroundColor: Colors.white,
         textColor: Colors.black
