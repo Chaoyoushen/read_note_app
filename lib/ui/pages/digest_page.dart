@@ -6,7 +6,6 @@ import 'package:readnote/models/add_note_type.dart';
 import 'package:readnote/models/note_model.dart';
 import 'package:readnote/utils/camera_util.dart';
 import 'package:fluro/fluro.dart';
-import 'package:readnote/utils/utils.dart';
 import 'package:uuid/uuid.dart';
 
 class DigestPage extends StatefulWidget {

@@ -3,6 +3,7 @@ import 'package:common_utils/common_utils.dart';
 import 'package:readnote/common/local_storage.dart';
 import 'package:readnote/data/net/dio_util.dart';
 import 'package:readnote/res/constres.dart';
+import 'package:readnote/utils/notice_util.dart';
 import 'package:readnote/utils/utils.dart';
 
 
@@ -78,20 +79,25 @@ class _SplashPageState extends State<SplashPage> {
 
   void _doDelay() async{
     await Future.delayed(Duration(milliseconds: 3000));
+    try{
     if(LocalStorage.getObject(ConstRes.TOKEN_KEY)!=null) {
-      bool flag = await DioUtil.checkLoginStatus();
-      if (flag) {
-        _goMain(context);
-      }else{
-        _goLogin(context);
-      }
+        bool flag = await DioUtil.checkLoginStatus();
+        if (flag) {
+          _goMain(context);
+        }else{
+          _goLogin(context);
+        }
     }else{
       _initBanner();
     }
+      }catch(e){
+      NoticeUtil.buildToast('net error');
+    }
+
   }
 
   void _goMain(BuildContext context) {
-    Routes.router.navigateTo(context, "/homePage",transition: _transitionType,clearStack: true);
+    Routes.router.navigateTo(context, "/homePage",transition: TransitionType.inFromRight,clearStack: true);
   }
 
     void _goLogin(BuildContext context) {

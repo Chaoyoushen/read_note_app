@@ -1,4 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:readnote/common/local_storage.dart';
+import 'package:readnote/data/net/dio_util.dart';
+import 'package:readnote/models/explore_list_model.dart';
+import 'package:readnote/models/explore_model.dart';
+import 'package:readnote/res/constres.dart';
+import 'package:readnote/ui/widget/loading_dialog.dart';
+import 'package:readnote/utils/notice_util.dart';
 import 'profile_card_alignment.dart';
 import 'dart:math';
 
@@ -9,9 +18,9 @@ class CardsSectionAlignment extends StatefulWidget
 {
   CardsSectionAlignment(BuildContext context)
   {
-    cardsSize[0] = new Size(MediaQuery.of(context).size.width * 0.90, MediaQuery.of(context).size.height * 0.78);
-    cardsSize[1] = new Size(MediaQuery.of(context).size.width * 0.85, MediaQuery.of(context).size.height * 0.75);
-    cardsSize[2] = new Size(MediaQuery.of(context).size.width * 0.8, MediaQuery.of(context).size.height * 0.7);
+    cardsSize[0] = new Size(MediaQuery.of(context).size.width * 0.90, MediaQuery.of(context).size.height * 0.75);
+    cardsSize[1] = new Size(MediaQuery.of(context).size.width * 0.90, MediaQuery.of(context).size.height * 0.70);
+    cardsSize[2] = new Size(MediaQuery.of(context).size.width * 0.90, MediaQuery.of(context).size.height * 0.65);
   }
 
   @override
@@ -30,17 +39,31 @@ class _CardsSectionState extends State<CardsSectionAlignment> with SingleTickerP
   final Alignment defaultFrontCardAlign = new Alignment(0.0, 0.0);
   Alignment frontCardAlign;
   double frontCardRot = 0.0;
+  bool initComplete = false;
+  ExploreModel defaultModel = ExploreModel('', '', '', '', '', '', '0', 0, '', 0, '', '', 0, 0);
+  ExploreModel nextCard;
+  ExploreListModel _model;
 
   @override
   void initState()
   {
+
+    Map data =json.decode(LocalStorage.getObject(ConstRes.TEMP_EXPLORE));
+    if(data == null){
+      NoticeUtil.buildToast('get note wrong');
+      for(int i = 0;i < 3;i++){
+        cards.add(ProfileCardAlignment(defaultModel));
+      }
+    }else{
+      ExploreListModel model = ExploreListModel.fromJson(data);
+      for(int i = 0;i < 3;i++){
+        cards.add(ProfileCardAlignment(model.exploreViewList[i]));
+      }
+    }
+
     super.initState();
 
-    // Init cards
-    for (cardsCounter = 0; cardsCounter < 3; cardsCounter++)
-    {
-      cards.add(new ProfileCardAlignment(cardsCounter));
-    }
+
 
     frontCardAlign = cardsAlign[2];
 
@@ -49,14 +72,40 @@ class _CardsSectionState extends State<CardsSectionAlignment> with SingleTickerP
     _controller.addListener(() => setState(() {}));
     _controller.addStatusListener((AnimationStatus status)
     {
-      if(status == AnimationStatus.completed) changeCardsOrder();
+      if(status == AnimationStatus.completed) {
+        changeCardsOrder();
+      }
+      if(status == AnimationStatus.forward){
+        getNextCard();
+      }
+    });
+  }
+
+
+
+  void initCard()async{
+    showDialog<Null>(
+        context: context, //BuildContext对象
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return new LoadingDialog( //调用对话框
+            text: '正在请求数据...',
+          );
+        });
+    await Future.delayed(Duration(milliseconds: 1500));
+    ExploreListModel model = await DioUtil.getExploreModel(1, 3);
+    Navigator.pop(context);
+    model.exploreViewList.forEach((el){cards.add(ProfileCardAlignment(el));});
+    setState(() {
+      initComplete = true;
     });
   }
 
   @override
   Widget build(BuildContext context)
   {
-    return new Expanded(
+    return new Expanded
+      (
         child: new Stack
           (
           children: <Widget>
@@ -156,20 +205,29 @@ class _CardsSectionState extends State<CardsSectionAlignment> with SingleTickerP
 
   void changeCardsOrder()
   {
+    //ExploreListModel model = await DioUtil.getExploreModel(cardsCounter%3, 1);
     setState(()
     {
       // Swap cards (back card becomes the middle card; middle card becomes the front card, front card becomes a new bottom card)
-      var temp = cards[0];
-      cards[0] = cards[1];
-      cards[1] = cards[2];
-      cards[2] = temp;
-
-      cards[2] = new ProfileCardAlignment(cardsCounter);
-      cardsCounter++;
-
-      frontCardAlign = defaultFrontCardAlign;
-      frontCardRot = 0.0;
+        var temp = cards[0];
+        cards[0] = cards[1];
+        cards[1] = cards[2];
+        cards[2] = temp;
+        cards[2] = new ProfileCardAlignment(nextCard==null?defaultModel:nextCard);
+        cardsCounter++;
+        frontCardAlign = defaultFrontCardAlign;
+        frontCardRot = 0.0;
     });
+  }
+
+
+  void getNextCard()async{
+      _model = await DioUtil.getExploreModel(cardsCounter%3+1, 1);
+      if(_model == null){
+        NoticeUtil.buildToast('server error');
+        nextCard = defaultModel;
+      }
+      nextCard = _model.exploreViewList.first;
   }
 
   void animateCards()
@@ -261,4 +319,6 @@ class CardsAnimation
         )
     );
   }
+
+
 }

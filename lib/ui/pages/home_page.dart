@@ -1,10 +1,18 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:readnote/common/local_storage.dart';
+import 'package:readnote/data/net/dio_util.dart';
+import 'package:readnote/models/explore_list_model.dart';
+import 'package:readnote/res/constres.dart';
 import 'package:readnote/ui/widget/drawer_widget.dart';
 import 'package:fluintl/fluintl.dart';
 import 'package:readnote/res/intlres.dart';
 import 'package:readnote/ui/pages/mine_page.dart';
 import 'package:readnote/ui/pages/explore_page.dart';
+import 'package:readnote/ui/widget/loading_dialog.dart';
 import 'package:readnote/ui/widget/make_note_widget.dart';
+import 'package:readnote/utils/notice_util.dart';
 
 bool isHomeInit = true;
 
@@ -63,12 +71,30 @@ class _HomePageState extends State<HomePage> {
             body: pages[_pageIndex],
             bottomNavigationBar: Container(
               margin: EdgeInsets.only(top: 8),
-              height: 47,
+              height: 50,
               child: BottomNavigationBar(
-                onTap: (int index){
+                onTap: (int index)async{
                   if(index == 1){
                     makeNote(context);
-                  }else{
+                  }else if(index == 2){
+                    showDialog<Null>(
+                        context: context, //BuildContext对象
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return new LoadingDialog( //调用对话框
+                            text: '正在请求数据...',
+                          );
+                        });
+                    ExploreListModel model = await DioUtil.getExploreModel(1, 3);
+                    await LocalStorage.putString(ConstRes.TEMP_EXPLORE, json.encode(model));
+                    Navigator.pop(context);
+                    NoticeUtil.buildToast('request success');
+                    setState((){
+                      _pageIndex = index;
+                    }
+                    );
+                  }
+                  else{
                     setState((){
                         _pageIndex = index;
                       }

@@ -32,8 +32,8 @@ class CameraUtil{
         });
     var _path = await Luban.compressImage(
       CompressObject(
-        imageFile: _imageFile,
-        path: _imageFile.path.substring(0,_imageFile.path.lastIndexOf('/')),
+        imageFile: file,
+        path: file.path.substring(0,file.path.lastIndexOf('/')),
         step: 9,
         mode: CompressMode.LARGE2SMALL
       )

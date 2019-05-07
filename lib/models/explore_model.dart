@@ -22,4 +22,8 @@ class ExploreModel{
   ExploreModel(
       this.digest,this.userId,this.page,this.bookName,this.note,this.bookId,this.createDate,
       this.discussNum,this.imgPath,this.likeNum,this.nickname,this.noteId,this.sharedNum,this.readNum);
+
+  factory ExploreModel.fromJson(Map<String, dynamic> json) => _$ExploreModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ExploreModelToJson(this);
 }

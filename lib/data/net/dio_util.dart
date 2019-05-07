@@ -7,9 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:readnote/common/local_storage.dart';
 import 'package:readnote/common/routes.dart';
 import 'package:readnote/models/book_info_model.dart';
+import 'package:readnote/models/explore_list_model.dart';
 import 'package:readnote/models/explore_model.dart';
 import 'package:readnote/models/image_result.dart';
 import 'package:readnote/models/login_model.dart';
+import 'package:readnote/models/note_detail_model.dart';
 import 'package:readnote/models/note_model.dart';
 import 'package:readnote/models/result_model.dart';
 import 'package:readnote/res/constres.dart';
@@ -20,7 +22,7 @@ class DioUtil {
   static final debug = false;
   static BuildContext context;
   /// 服务器路径
-  static final host = 'http://192.168.2.13:7002';
+  static final host = 'http://192.168.2.10:7002';
   ///调用api资源
   static final baiduHost = 'https://aip.baidubce.com/rest/2.0/ocr/v1';
   ///用户向服务请求识别某张图中的所有文字,通用文字识别
@@ -34,12 +36,11 @@ class DioUtil {
 
   static Options getOption(){
     String token = LocalStorage.getObject(ConstRes.TOKEN_KEY);
-    print(token);
     if(_option == null){
       _option = new Options();
     }
     _option.headers.addAll({'token':token});
-    print(_option.headers);
+    _option.connectTimeout = 10000;
     return _option;
   }
 
@@ -244,12 +245,63 @@ class DioUtil {
     }
   }
 
-  static Future<ExploreModel> getExploreModel(int current,int num)async{
+  static Future<ExploreListModel> getExploreModel(int current,int num)async{
     String path = host + '/explore/get?';
     Response response = await _dio.get(path+'current=$current&num=$num',options: getOption());
     ResultModel model = ResultModel.fromJson(response.data);
-    print(model.data);
+    if(model.code == 200){
+      Map tmp = model.data;
+      List list = tmp['exploreViewList'];
+      ExploreListModel exploreList = ExploreListModel.fromJson(tmp);
+      return exploreList;
+    }
+    return null;
   }
+
+  static Future<bool> makeDiscuss(String noteId,String discuss)async{
+    try{
+      String path = host + '/note/discuss/add';
+      Map data = {'noteId':noteId,'discuss':discuss,'createDate':DateTime.now().millisecondsSinceEpoch.toString()};
+      Response response = await _dio.post(
+          path,
+          options: getOption(),
+          data: data
+      );
+      ResultModel model = ResultModel.fromJson(response.data);
+      if(model.code == 200){
+        return true;
+      }else if(model.data == 1010){
+        NoticeUtil.buildToast("sql error");
+      }else{
+        NoticeUtil.buildToast("unknow error");
+      }
+      return false;
+    }catch(e){
+      NoticeUtil.buildToast("something wrong with net");
+      return false;
+    }
+  }
+
+  static Future<NoteDetailModel> getNoteDetail(String noteId)async{
+    try{
+      String path = host + '/note/query/detail?noteId=';
+      Response response = await _dio.get(path+noteId,options: getOption());
+      ResultModel model = ResultModel.fromJson(response.data);
+      if(model.code == 200){
+        NoteDetailModel noteDetail = NoteDetailModel.fromJson(model.data);
+        return noteDetail;
+      }else if(model.data == 1010){
+        NoticeUtil.buildToast("sql error");
+      }else{
+        NoticeUtil.buildToast("unknow error");
+      }
+      return null;
+    }catch(e){
+      NoticeUtil.buildToast("something wrong with net");
+      return null;
+    }
+  }
+
 
 }
 

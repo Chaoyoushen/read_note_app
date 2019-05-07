@@ -4,6 +4,7 @@ import 'package:readnote/ui/pages/check_note_page.dart';
 import 'package:readnote/ui/pages/digest_page.dart';
 import 'package:readnote/ui/pages/home_page.dart';
 import 'package:readnote/ui/pages/login_page.dart';
+import 'package:readnote/ui/pages/note_detail_page.dart';
 import 'package:readnote/ui/pages/select_book_page.dart';
 import 'package:readnote/ui/pages/splash_page.dart';
 import 'package:readnote/ui/pages/register_page.dart';
@@ -69,6 +70,13 @@ var selectBookHandler = Handler(
     handlerFunc: (BuildContext context, Map<String,List<String>> params){
       //var digest = params['digest']?.first;
       return SelectBookPage();
+    }
+);
+
+var noteDetailHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String,List<String>> params){
+      String noteId = params['noteId']?.first;
+      return NoteDetailPage(noteId);
     }
 );
 

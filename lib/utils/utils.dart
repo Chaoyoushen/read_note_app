@@ -32,7 +32,8 @@ class Utils {
     }
   }
 
-  static String getCurrentTime(DateTime date){
+  static String getCurrentTime(String stamp){
+    DateTime date = new DateTime.fromMillisecondsSinceEpoch(int.parse(stamp));
     return date.year.toString()+'-'+date.month.toString()+'-'+date.day.toString();
 
   }

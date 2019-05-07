@@ -1,25 +1,23 @@
+import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:readnote/common/routes.dart';
+import 'package:readnote/models/explore_model.dart';
 import 'package:readnote/utils/utils.dart';
 
-class ProfileCardAlignment extends StatelessWidget
-{
-
-  ///example 带一个顺序参数
-  ///TODO
-  final int cardNum;
-  ProfileCardAlignment(this.cardNum);
-
-
+class ProfileCardAlignment extends StatelessWidget {
+  final ExploreModel _exploreModel;
+  ProfileCardAlignment(this._exploreModel);
 
   @override
-  Widget build(BuildContext context)
-  {
-    return Card(
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: (){goDetail(context);},
+      child: Card(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.only(left: 22,top: 22,bottom: 8),
+              padding: EdgeInsets.only(left: 22,top: 14,bottom: 8),
               child:Row(
                 children: <Widget>[
                   Container(
@@ -29,9 +27,9 @@ class ProfileCardAlignment extends StatelessWidget
                     decoration: new BoxDecoration(
                       color: Colors.white,
                       image: DecorationImage(image: ExactAssetImage(Utils.getImgPath('guide1')),fit: BoxFit.cover),
-                      shape: BoxShape.rectangle,              // <-- 这里需要设置为 rectangle
+                      shape: BoxShape.rectangle,
                       borderRadius: new BorderRadius.all(
-                        const Radius.circular(5.0),        // <-- rectangle 时，BorderRadius 才有效
+                        const Radius.circular(5.0),
                       ),
                     ),
                   ),
@@ -40,15 +38,15 @@ class ProfileCardAlignment extends StatelessWidget
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                          'chaoyous',
+                        _exploreModel.nickname,
                         style: TextStyle(
-                          fontSize: 18
+                            fontSize: 18
                         ),
                       ),
                       Text(
-                        '2019-5-5  100阅读',
+                        Utils.getCurrentTime(_exploreModel.createDate)+' '+_exploreModel.readNum.toString()+'阅读',
                         style: TextStyle(
-                          color: Colors.grey
+                            color: Colors.grey
                         ),
                       )
                     ],
@@ -57,80 +55,119 @@ class ProfileCardAlignment extends StatelessWidget
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(8),
-              child: SizedBox(
-                height: 90,
-                child:Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    'note',
-                    textAlign: TextAlign.start,
-                    maxLines: 15,
+                padding: EdgeInsets.only(left: 16,right: 16,bottom: 8),
+                child: SizedBox(
+                    height: 110,
+                    child:Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        _exploreModel.note,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.start,
+                        maxLines: 5,
 
-                  ),
+                      ),
+                    )
                 )
-              )
             ),
             Padding(
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.only(left: 8,right: 8),
                 child:Column(
                   children: <Widget>[
                     Divider(color: Colors.black),
                     Align(
-                      alignment: Alignment.centerLeft,
-                      child:SizedBox(
-                        height: 20,
-                        child: OutlineButton(
-                          padding: EdgeInsets.only(left: 8),
-                          onPressed: () {},
-                          splashColor: Colors.blue,
-                          highlightedBorderColor: Colors.blue,
-                          child: Text(
-                            'bookinfo',
-                            style: TextStyle(
-                                fontSize: 12,
-                            color: Colors.blue),
+                        alignment: Alignment.centerLeft,
+                        child:SizedBox(
+                          height: 20,
+                          child: OutlineButton(
+                            padding: EdgeInsets.only(left: 8),
+                            onPressed: () {},
+                            splashColor: Colors.blue,
+                            highlightedBorderColor: Colors.blue,
+                            child: Text(
+                              '第'+_exploreModel.page+'页/《'+_exploreModel.bookName+'》',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.blue),
+                            ),
+                            borderSide: BorderSide(color: Color(0xFFFFFF)),
                           ),
-                          borderSide: BorderSide(color: Color(0xFFFFFF)),
-                        ),
-                      )
+                        )
                     )
                   ],
                 )
             ),
             Padding(
-              padding: EdgeInsets.only(left: 8,right: 8),
+              padding: EdgeInsets.only(left: 16,right: 16),
               child: SizedBox(
-                height: 160,
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Text('digest'),
-                )
+                  height: 125,
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      _exploreModel.digest,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 6,
+                    ),
+                  )
               ),
             ),
             Padding(
-                padding: EdgeInsets.all(8),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(IconData(0xe6f3,fontFamily: 'iconfont'),color: Colors.black),
-                        onPressed: (){},
-                      ),
-                      IconButton(
-                        icon: Icon(IconData(0xe667,fontFamily: 'iconfont'),color: Colors.black),
-                        onPressed: (){},
-                      ),
-                      IconButton(
-                        icon: Icon(
-                            IconData(0xe669,fontFamily: 'iconfont'),color: Colors.red),
-                        onPressed: (){},
-                      ),
-                    ],
+              padding: EdgeInsets.only(left: 12,right: 24,bottom: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    child: Row(
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(IconData(0xe6f3,fontFamily: 'iconfont'),color: Colors.black),
+                          onPressed: (){share();},
+                        ),
+                        Text(_exploreModel.sharedNum.toString())
+                      ],
+                    ),
                   ),
+                  Container(
+                    child: Row(
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(IconData(0xe667,fontFamily: 'iconfont'),color: Colors.black),
+                          onPressed: (){goDiscuss(context);},
+                        ),
+                        Text(_exploreModel.discussNum.toString())
+                      ],
+                    ),
+                  ),
+                  Container(
+                    child: Row(
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(
+                              IconData(0xe669,fontFamily: 'iconfont'),color: Colors.red),
+                          onPressed: (){addLike();},
+                        ),
+                        Text(_exploreModel.likeNum.toString())
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
+      ),
     );
   }
+
+  void goDetail(BuildContext context){
+    print(_exploreModel.noteId);
+    Routes.router.navigateTo(context, '/noteDetailPage?noteId='+_exploreModel.noteId,transition: TransitionType.fadeIn);
+  }
+
+  void addLike(){}
+  void share(){}
+  void goDiscuss(BuildContext context){
+    goDetail(context);
+  }
+
 }
