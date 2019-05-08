@@ -22,7 +22,7 @@ class DioUtil {
   static final debug = false;
   static BuildContext context;
   /// 服务器路径
-  static final host = 'http://192.168.2.10:7002';
+  static final host = 'http://192.168.2.13:7002';
   ///调用api资源
   static final baiduHost = 'https://aip.baidubce.com/rest/2.0/ocr/v1';
   ///用户向服务请求识别某张图中的所有文字,通用文字识别
@@ -282,10 +282,10 @@ class DioUtil {
     }
   }
 
-  static Future<NoteDetailModel> getNoteDetail(String noteId)async{
+  static Future<NoteDetailModel> getNoteDetail(String noteId,int type)async{
     try{
       String path = host + '/note/query/detail?noteId=';
-      Response response = await _dio.get(path+noteId,options: getOption());
+      Response response = await _dio.get(path+noteId+'&type='+type.toString(),options: getOption());
       ResultModel model = ResultModel.fromJson(response.data);
       if(model.code == 200){
         NoteDetailModel noteDetail = NoteDetailModel.fromJson(model.data);
@@ -299,6 +299,44 @@ class DioUtil {
     }catch(e){
       NoticeUtil.buildToast("something wrong with net");
       return null;
+    }
+  }
+
+  static likeDiscuss(String discussId)async{
+    try{
+      String path = host + '/note/discuss/manner?discussId=';
+      Response response = await _dio.get(path+discussId,options: getOption());
+      ResultModel model = ResultModel.fromJson(response.data);
+      if(model.code == 200){
+        return true;
+      }else if(model.data == 1010){
+        NoticeUtil.buildToast("sql error");
+      }else{
+        NoticeUtil.buildToast("unknow error");
+      }
+      return false;
+    }catch(e){
+      NoticeUtil.buildToast("something wrong with net");
+      return false;
+    }
+  }
+
+  static likeNote(String noteId)async{
+    try{
+      String path = host + '/note/manner?noteId=';
+      Response response = await _dio.get(path+noteId,options: getOption());
+      ResultModel model = ResultModel.fromJson(response.data);
+      if(model.code == 200){
+        return true;
+      }else if(model.data == 1010){
+        NoticeUtil.buildToast("sql error");
+      }else{
+        NoticeUtil.buildToast("unknow error");
+      }
+      return false;
+    }catch(e){
+      NoticeUtil.buildToast("something wrong with net");
+      return false;
     }
   }
 

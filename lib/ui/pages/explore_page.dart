@@ -9,10 +9,13 @@ class ExplorePage extends StatefulWidget {
 class _ExplorePageState extends State<ExplorePage> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        CardsSectionAlignment(context)
-      ],
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          CardsSectionAlignment(context)
+        ],
+      ),
     );
   }
 }

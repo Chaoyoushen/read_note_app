@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:readnote/bloc/bloc.dart';
+import 'package:readnote/bloc/explore_bloc.dart';
 import 'package:readnote/common/local_storage.dart';
 import 'package:readnote/data/net/dio_util.dart';
 import 'package:readnote/models/explore_list_model.dart';
@@ -9,6 +11,7 @@ import 'package:readnote/res/constres.dart';
 import 'package:readnote/ui/widget/loading_dialog.dart';
 import 'package:readnote/utils/notice_util.dart';
 import 'profile_card_alignment.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:math';
 
 List<Alignment> cardsAlign = [ new Alignment(0.0, 1.0), new Alignment(0.0, 0.8), new Alignment(0.0, 0.0) ];
@@ -18,9 +21,9 @@ class CardsSectionAlignment extends StatefulWidget
 {
   CardsSectionAlignment(BuildContext context)
   {
-    cardsSize[0] = new Size(MediaQuery.of(context).size.width * 0.90, MediaQuery.of(context).size.height * 0.75);
+    cardsSize[0] = new Size(MediaQuery.of(context).size.width * 0.92, MediaQuery.of(context).size.height * 0.75);
     cardsSize[1] = new Size(MediaQuery.of(context).size.width * 0.90, MediaQuery.of(context).size.height * 0.70);
-    cardsSize[2] = new Size(MediaQuery.of(context).size.width * 0.90, MediaQuery.of(context).size.height * 0.65);
+    cardsSize[2] = new Size(MediaQuery.of(context).size.width * 0.88, MediaQuery.of(context).size.height * 0.65);
   }
 
   @override
@@ -29,7 +32,7 @@ class CardsSectionAlignment extends StatefulWidget
 
 class _CardsSectionState extends State<CardsSectionAlignment> with SingleTickerProviderStateMixin
 {
-
+  final ExploreBloc _exploreBloc = ExploreBloc();
   ///记录划过的卡片数量
   int cardsCounter = 0;
 
@@ -40,31 +43,15 @@ class _CardsSectionState extends State<CardsSectionAlignment> with SingleTickerP
   Alignment frontCardAlign;
   double frontCardRot = 0.0;
   bool initComplete = false;
-  ExploreModel defaultModel = ExploreModel('', '', '', '', '', '', '0', 0, '', 0, '', '', 0, 0);
-  ExploreModel nextCard;
-  ExploreListModel _model;
+  ExploreModel defaultModel = ExploreModel('', '', '', '', '', '', '0', 0, '', 0, '', '', 0, 0,0);
+  ProfileCardAlignment nextCard;
 
   @override
   void initState()
   {
-
-    Map data =json.decode(LocalStorage.getObject(ConstRes.TEMP_EXPLORE));
-    if(data == null){
-      NoticeUtil.buildToast('get note wrong');
-      for(int i = 0;i < 3;i++){
-        cards.add(ProfileCardAlignment(defaultModel));
-      }
-    }else{
-      ExploreListModel model = ExploreListModel.fromJson(data);
-      for(int i = 0;i < 3;i++){
-        cards.add(ProfileCardAlignment(model.exploreViewList[i]));
-      }
-    }
-
+    initCard();
+    _exploreBloc.dispatch(LoadEvent());
     super.initState();
-
-
-
     frontCardAlign = cardsAlign[2];
 
     // Init the animation controller
@@ -75,36 +62,40 @@ class _CardsSectionState extends State<CardsSectionAlignment> with SingleTickerP
       if(status == AnimationStatus.completed) {
         changeCardsOrder();
       }
-      if(status == AnimationStatus.forward){
-        getNextCard();
-      }
     });
+  }
+
+  Widget buildNextCard(BuildContext context){
+    return BlocBuilder(
+      bloc: _exploreBloc,
+      builder: (BuildContext context,ExploreState state){
+        if(state is LoadExplore){
+          return ProfileCardAlignment(state.model);
+        }
+      },
+    );
   }
 
 
 
   void initCard()async{
-    showDialog<Null>(
-        context: context, //BuildContext对象
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return new LoadingDialog( //调用对话框
-            text: '正在请求数据...',
-          );
-        });
-    await Future.delayed(Duration(milliseconds: 1500));
-    ExploreListModel model = await DioUtil.getExploreModel(1, 3);
-    Navigator.pop(context);
+    ExploreListModel model = await DioUtil.getExploreModel(0, 3);
     model.exploreViewList.forEach((el){cards.add(ProfileCardAlignment(el));});
     setState(() {
       initComplete = true;
     });
   }
+  void setNextCard()async{
+    ExploreListModel model = await DioUtil.getExploreModel(cardsCounter%3, 1);
+      nextCard = ProfileCardAlignment(model.exploreViewList[0]);
+  }
 
   @override
   Widget build(BuildContext context)
   {
-    return new Expanded
+    return !initComplete?
+    Center(child: CircularProgressIndicator()):
+    new Expanded
       (
         child: new Stack
           (
@@ -205,15 +196,13 @@ class _CardsSectionState extends State<CardsSectionAlignment> with SingleTickerP
 
   void changeCardsOrder()
   {
-    //ExploreListModel model = await DioUtil.getExploreModel(cardsCounter%3, 1);
     setState(()
     {
       // Swap cards (back card becomes the middle card; middle card becomes the front card, front card becomes a new bottom card)
-        var temp = cards[0];
         cards[0] = cards[1];
         cards[1] = cards[2];
-        cards[2] = temp;
-        cards[2] = new ProfileCardAlignment(nextCard==null?defaultModel:nextCard);
+        cards[2] = nextCard;
+        setNextCard();
         cardsCounter++;
         frontCardAlign = defaultFrontCardAlign;
         frontCardRot = 0.0;
@@ -221,20 +210,18 @@ class _CardsSectionState extends State<CardsSectionAlignment> with SingleTickerP
   }
 
 
-  void getNextCard()async{
-      _model = await DioUtil.getExploreModel(cardsCounter%3+1, 1);
-      if(_model == null){
-        NoticeUtil.buildToast('server error');
-        nextCard = defaultModel;
-      }
-      nextCard = _model.exploreViewList.first;
-  }
 
   void animateCards()
   {
     _controller.stop();
     _controller.value = 0.0;
     _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _exploreBloc.dispose();
+    super.dispose();
   }
 }
 
@@ -309,7 +296,7 @@ class CardsAnimation
     return new AlignmentTween
       (
         begin: beginAlign,
-        end: new Alignment(beginAlign.x > 0 ? beginAlign.x + 30.0 : beginAlign.x - 30.0, 0.0) // Has swiped to the left or right?
+        end: new Alignment(beginAlign.x > 0 ? beginAlign.x + 30.0 : beginAlign.x - 30.0, 0.0)
     ).animate
       (
         new CurvedAnimation

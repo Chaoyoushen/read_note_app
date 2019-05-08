@@ -76,23 +76,6 @@ class _HomePageState extends State<HomePage> {
                 onTap: (int index)async{
                   if(index == 1){
                     makeNote(context);
-                  }else if(index == 2){
-                    showDialog<Null>(
-                        context: context, //BuildContext对象
-                        barrierDismissible: false,
-                        builder: (BuildContext context) {
-                          return new LoadingDialog( //调用对话框
-                            text: '正在请求数据...',
-                          );
-                        });
-                    ExploreListModel model = await DioUtil.getExploreModel(1, 3);
-                    await LocalStorage.putString(ConstRes.TEMP_EXPLORE, json.encode(model));
-                    Navigator.pop(context);
-                    NoticeUtil.buildToast('request success');
-                    setState((){
-                      _pageIndex = index;
-                    }
-                    );
                   }
                   else{
                     setState((){

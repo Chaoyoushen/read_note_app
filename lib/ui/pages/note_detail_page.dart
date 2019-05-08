@@ -16,27 +16,32 @@ class NoteDetailPage extends StatefulWidget {
 }
 
 class _NoteDetailPageState extends State<NoteDetailPage> {
-  var _futureBuilderFuture;
-  final AsyncMemoizer _memoizer = AsyncMemoizer();
   TextEditingController controller;
   _NoteDetailPageState(this.noteId);
   final String noteId;
   ExploreModel _exploreModel;
-  List<DiscussModel> list;
+  List<DiscussModel> _list;
 
   @override
   void initState() {
     controller = new TextEditingController();
-    _futureBuilderFuture = getData();
+    getData(0);
     super.initState();
   }
 
-  Future getData()async{
-      try{
-        if(noteId == ''||noteId == null){
-          NoticeUtil.buildToast('err');
-        }
-        return  await DioUtil.getNoteDetail(noteId);
+
+   getData(int type)async {
+     try {
+       if (noteId == '' || noteId == null) {
+         NoticeUtil.buildToast('err');
+       }
+       NoteDetailModel model = await DioUtil.getNoteDetail(noteId, type);
+       setState(() {
+         if(_exploreModel == null){
+           _exploreModel = model.exploreModel;
+         }
+         _list = model.discussList;
+       });
       }catch(e) {
         NoticeUtil.buildToast('net err');
         return null;
@@ -67,35 +72,12 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
         ),
         centerTitle: true,
       ),
-      body: RefreshIndicator(
-            onRefresh: getData,
-            child:FutureBuilder(
-              builder: _buildFuture,
-              future: _futureBuilderFuture,
-            )
-          )
+      body: _exploreModel == null?Center(child: CircularProgressIndicator()):_buildListView(context)
         );
   }
 
-  Widget _buildFuture(BuildContext context,AsyncSnapshot snapshot){
-    switch (snapshot.connectionState) {
-      case ConnectionState.waiting:
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      case ConnectionState.done:
-        if (snapshot.hasError) return Text('Error: ${snapshot.error}');
-        return _buildListView(context, snapshot);
-      default:
-        return Container();
-    }
 
-  }
-  Widget _buildListView(BuildContext context,AsyncSnapshot snapshot){
-    NoteDetailModel model= snapshot.data;
-    print(snapshot.data.toString());
-    _exploreModel = model.exploreModel;
-    List<DiscussModel> list = model.discussList;
+  Widget _buildListView(BuildContext context){
     return ListView(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         children: <Widget>[
@@ -246,7 +228,8 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                   )
               )
           ),
-          _buildDiscussView(list)
+          Divider(),
+          _buildDiscussView(_list)
         ]
     );
   }
@@ -260,12 +243,15 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
           barrierDismissible: false,
           builder: (BuildContext context) {
             return new LoadingDialog( //调用对话框
-              text: '正在解析图片...',
+              text: '正在发表评论...',
             );
           }
       );
       await DioUtil.makeDiscuss(noteId, controller.text);
       Navigator.pop(context);
+      controller.text = '';
+      NoticeUtil.buildToast('discuss success');
+      getData(1);
     }
 
   }
@@ -282,72 +268,79 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
     );
   }
 
-  Widget _itemBuilder(BuildContext context, int index, movies) {
-    if (index.isOdd) {
-      return Divider();
-    }
-    index = index ~/ 2;
+  Widget _itemBuilder(BuildContext context, int index,List<DiscussModel> list) {
     return Container(
-      height: 60,
-      width: 300,
-      margin: EdgeInsets.all(8),
       child: Card(
-        margin: EdgeInsets.all(8),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 22,top: 14,bottom: 8),
-                  child:Row(
-                    children: <Widget>[
-                      Container(
-                        width: 40.0,
-                        height: 40.0,
-                        margin: EdgeInsets.only(right: 8),
-                        decoration: new BoxDecoration(
-                          color: Colors.white,
-                          image: DecorationImage(image: ExactAssetImage(Utils.getImgPath('guide1')),fit: BoxFit.cover),
-                          shape: BoxShape.rectangle,
-                          borderRadius: new BorderRadius.all(
-                            const Radius.circular(5.0),
+            Padding(
+              padding: EdgeInsets.only(left: 8,right: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.all(8),
+                    child:Row(
+                      children: <Widget>[
+                        Container(
+                          width: 40.0,
+                          height: 40.0,
+                          margin: EdgeInsets.only(right: 8),
+                          decoration: new BoxDecoration(
+                            color: Colors.white,
+                            image: DecorationImage(image: ExactAssetImage(Utils.getImgPath('guide1')),fit: BoxFit.cover),
+                            shape: BoxShape.rectangle,
+                            borderRadius: new BorderRadius.all(
+                              const Radius.circular(5.0),
+                            ),
                           ),
                         ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            _exploreModel.nickname,
-                            style: TextStyle(
-                                fontSize: 18
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              _exploreModel.nickname,
+                              style: TextStyle(
+                                  fontSize: 18
+                              ),
                             ),
-                          ),
-                          Text(
-                            Utils.getCurrentTime(_exploreModel.createDate)+' '+_exploreModel.readNum.toString()+'阅读',
-                            style: TextStyle(
-                                color: Colors.grey
-                            ),
-                          )
-                        ],
-                      )
-                    ],
+                            Text(
+                              Utils.getCurrentTime(list[index].createDate),
+                              style: TextStyle(
+                                  color: Colors.grey
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
+                  Container(
+                    margin: EdgeInsets.only(right: 8),
+                    child: Row(
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(IconData(0xe644,fontFamily: 'iconfont')),
+                          onPressed: (){},
+                        ),
+                        Text(list[index].likeNum.toString())
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(8),
+              child: Container(
+                margin: EdgeInsets.only(bottom: 8),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(list[index].discuss),
                 ),
-                Container(
-                  child: Row(
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(IconData(0xe644,fontFamily: 'iconfont')),
-                      ),
-                      Text('0')
-                    ],
-                  ),
-                )
-              ],
+              )
             )
           ],
         ),

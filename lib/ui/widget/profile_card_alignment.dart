@@ -1,15 +1,22 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:readnote/common/routes.dart';
+import 'package:readnote/data/net/dio_util.dart';
+import 'package:readnote/models/explore_list_model.dart';
 import 'package:readnote/models/explore_model.dart';
 import 'package:readnote/utils/utils.dart';
 
-class ProfileCardAlignment extends StatelessWidget {
-  final ExploreModel _exploreModel;
-  ProfileCardAlignment(this._exploreModel);
 
+
+class ProfileCardAlignment extends StatelessWidget {
+  ExploreModel exploreModel;
+  ProfileCardAlignment(this.exploreModel);
   @override
   Widget build(BuildContext context) {
+    return buildCard(context);
+
+  }
+  Widget buildCard(BuildContext context){
     return GestureDetector(
       onTap: (){goDetail(context);},
       child: Card(
@@ -38,13 +45,13 @@ class ProfileCardAlignment extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        _exploreModel.nickname,
+                        exploreModel.nickname,
                         style: TextStyle(
                             fontSize: 18
                         ),
                       ),
                       Text(
-                        Utils.getCurrentTime(_exploreModel.createDate)+' '+_exploreModel.readNum.toString()+'阅读',
+                        Utils.getCurrentTime(exploreModel.createDate)+' '+exploreModel.readNum.toString()+'阅读',
                         style: TextStyle(
                             color: Colors.grey
                         ),
@@ -61,7 +68,7 @@ class ProfileCardAlignment extends StatelessWidget {
                     child:Align(
                       alignment: Alignment.topLeft,
                       child: Text(
-                        _exploreModel.note,
+                        exploreModel.note,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.start,
                         maxLines: 5,
@@ -85,7 +92,7 @@ class ProfileCardAlignment extends StatelessWidget {
                             splashColor: Colors.blue,
                             highlightedBorderColor: Colors.blue,
                             child: Text(
-                              '第'+_exploreModel.page+'页/《'+_exploreModel.bookName+'》',
+                              '第'+exploreModel.page+'页/《'+exploreModel.bookName+'》',
                               style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.blue),
@@ -104,7 +111,7 @@ class ProfileCardAlignment extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.topLeft,
                     child: Text(
-                      _exploreModel.digest,
+                      exploreModel.digest,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 6,
                     ),
@@ -123,7 +130,7 @@ class ProfileCardAlignment extends StatelessWidget {
                           icon: Icon(IconData(0xe6f3,fontFamily: 'iconfont'),color: Colors.black),
                           onPressed: (){share();},
                         ),
-                        Text(_exploreModel.sharedNum.toString())
+                        Text(exploreModel.sharedNum.toString())
                       ],
                     ),
                   ),
@@ -134,7 +141,7 @@ class ProfileCardAlignment extends StatelessWidget {
                           icon: Icon(IconData(0xe667,fontFamily: 'iconfont'),color: Colors.black),
                           onPressed: (){goDiscuss(context);},
                         ),
-                        Text(_exploreModel.discussNum.toString())
+                        Text(exploreModel.discussNum.toString())
                       ],
                     ),
                   ),
@@ -142,11 +149,11 @@ class ProfileCardAlignment extends StatelessWidget {
                     child: Row(
                       children: <Widget>[
                         IconButton(
-                          icon: Icon(
-                              IconData(0xe669,fontFamily: 'iconfont'),color: Colors.red),
+                          icon: exploreModel.likeFlag == 1?Icon(IconData(0xe668,fontFamily: 'iconfont'),color: Colors.red)
+                              :Icon(IconData(0xe669,fontFamily: 'iconfont'),color: Colors.red),
                           onPressed: (){addLike();},
                         ),
-                        Text(_exploreModel.likeNum.toString())
+                        Text(exploreModel.likeNum.toString())
                       ],
                     ),
                   ),
@@ -160,14 +167,18 @@ class ProfileCardAlignment extends StatelessWidget {
   }
 
   void goDetail(BuildContext context){
-    print(_exploreModel.noteId);
-    Routes.router.navigateTo(context, '/noteDetailPage?noteId='+_exploreModel.noteId,transition: TransitionType.fadeIn);
+    print(exploreModel.noteId);
+    Routes.router.navigateTo(context, '/noteDetailPage?noteId='+exploreModel.noteId,transition: TransitionType.fadeIn);
   }
 
-  void addLike(){}
+  void addLike(){
+
+  }
   void share(){}
   void goDiscuss(BuildContext context){
     goDetail(context);
   }
-
 }
+
+
+
