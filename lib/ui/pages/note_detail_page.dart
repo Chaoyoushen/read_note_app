@@ -48,6 +48,11 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
       }
     }
 
+    void likeDiscuss(DiscussModel model){
+      print(model.likeNum);
+      print(model.nickname);
+    }
+
 
 
 
@@ -85,62 +90,59 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 22, top: 22, bottom: 8),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        width: 40.0,
-                        height: 40.0,
-                        margin: EdgeInsets.only(right: 8),
-                        decoration: new BoxDecoration(
-                          color: Colors.white,
-                          image: DecorationImage(
-                              image: ExactAssetImage(Utils.getImgPath('guide1')),
-                              fit: BoxFit.cover),
-                          shape: BoxShape.rectangle,
-                          borderRadius: new BorderRadius.all(
-                            const Radius.circular(5.0),
-                          ),
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
+                  GestureDetector(
+                    onTap: (){NoticeUtil.buildToast('tap header');},
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 22, top: 22, bottom: 8),
+                      child: Row(
                         children: <Widget>[
-                          Text(
-                            _exploreModel.nickname,
-                            style: TextStyle(
-                                fontSize: 18
+                          Container(
+                            width: 40.0,
+                            height: 40.0,
+                            margin: EdgeInsets.only(right: 8),
+                            decoration: new BoxDecoration(
+                              color: Colors.white,
+                              image: DecorationImage(
+                                  image: ExactAssetImage(Utils.getImgPath('guide1')),
+                                  fit: BoxFit.cover),
+                              shape: BoxShape.rectangle,
+                              borderRadius: new BorderRadius.all(
+                                const Radius.circular(5.0),
+                              ),
                             ),
                           ),
-                          Text(
-                            Utils.getCurrentTime(_exploreModel.createDate) + ' ' +
-                                _exploreModel.readNum.toString() + '阅读',
-                            style: TextStyle(
-                                color: Colors.grey
-                            ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                _exploreModel.nickname,
+                                style: TextStyle(
+                                    fontSize: 18
+                                ),
+                              ),
+                              Text(
+                                Utils.getCurrentTime(_exploreModel.createDate) + ' ' +
+                                    _exploreModel.readNum.toString() + '阅读',
+                                style: TextStyle(
+                                    color: Colors.grey
+                                ),
+                              )
+                            ],
                           )
                         ],
-                      )
-                    ],
+                      ),
+                    ),
                   ),
-                ),
                 Padding(
                     padding: EdgeInsets.only(left: 16, top: 8, right: 16, bottom: 8),
-                    child: SizedBox(
-                        height: 120,
                         child: Align(
                           alignment: Alignment.topLeft,
                           child: Text(
                             _exploreModel.note,
-                            overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.start,
-                            maxLines: 5,
-
                           ),
                         )
-                    )
                 ),
                 Padding(
                     padding: EdgeInsets.all(8),
@@ -171,17 +173,12 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                     )
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 16, right: 16),
-                  child: SizedBox(
-                      height: 160,
-                      child: Align(
+                  padding: EdgeInsets.only(left: 16, right: 16,bottom: 16),
+                  child: Align(
                         alignment: Alignment.topLeft,
                         child: Text(
                           _exploreModel.digest,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 6,
                         ),
-                      )
                   ),
                 ),
               ],
@@ -301,7 +298,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              _exploreModel.nickname,
+                              list[index].nickname == null?'':list[index].nickname,
                               style: TextStyle(
                                   fontSize: 18
                               ),
@@ -323,7 +320,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                       children: <Widget>[
                         IconButton(
                           icon: Icon(IconData(0xe644,fontFamily: 'iconfont')),
-                          onPressed: (){},
+                          onPressed: (){likeDiscuss(list[index]);},
                         ),
                         Text(list[index].likeNum.toString())
                       ],

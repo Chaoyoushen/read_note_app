@@ -58,7 +58,7 @@ dependencies:
   #设备信息
   #device_info: ^0.4.0+1
   #图片缓存插件
-  cached_network_image: ^0.7.0
+  cached_network_image: ^0.8.0
   #url相关
   url_launcher: ^5.0.2
   #图片相关
@@ -105,6 +105,7 @@ flutter:
     - assets/images/guide2.jpg
     - assets/images/guide3.jpg
     - assets/images/launch.jpg
+    - assets/images/default_book_image.jpg
     - assets/images/header.jpg
     - assets/svg_img/scan.svg
     - assets/icon/

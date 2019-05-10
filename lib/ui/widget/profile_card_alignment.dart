@@ -17,9 +17,7 @@ class ProfileCardAlignment extends StatelessWidget {
 
   }
   Widget buildCard(BuildContext context){
-    return GestureDetector(
-      onTap: (){goDetail(context);},
-      child: Card(
+    return Card(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -61,7 +59,9 @@ class ProfileCardAlignment extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
+            GestureDetector(
+              onTap: (){goDetail(context);},
+              child:Padding(
                 padding: EdgeInsets.only(left: 16,right: 16,bottom: 8),
                 child: SizedBox(
                     height: 110,
@@ -76,7 +76,7 @@ class ProfileCardAlignment extends StatelessWidget {
                       ),
                     )
                 )
-            ),
+            )),
             Padding(
                 padding: EdgeInsets.only(left: 8,right: 8),
                 child:Column(
@@ -88,7 +88,7 @@ class ProfileCardAlignment extends StatelessWidget {
                           height: 20,
                           child: OutlineButton(
                             padding: EdgeInsets.only(left: 8),
-                            onPressed: () {},
+                            onPressed: () {goBookInfo(context);},
                             splashColor: Colors.blue,
                             highlightedBorderColor: Colors.blue,
                             child: Text(
@@ -104,9 +104,11 @@ class ProfileCardAlignment extends StatelessWidget {
                   ],
                 )
             ),
-            Padding(
+            GestureDetector(
+              onTap: (){goDetail(context);},
+              child:Padding(
               padding: EdgeInsets.only(left: 16,right: 16),
-              child: SizedBox(
+                child: SizedBox(
                   height: 125,
                   child: Align(
                     alignment: Alignment.topLeft,
@@ -117,7 +119,7 @@ class ProfileCardAlignment extends StatelessWidget {
                     ),
                   )
               ),
-            ),
+            )),
             Padding(
               padding: EdgeInsets.only(left: 12,right: 24,bottom: 8),
               child: Row(
@@ -162,7 +164,6 @@ class ProfileCardAlignment extends StatelessWidget {
             ),
           ],
         ),
-      ),
     );
   }
 
@@ -177,6 +178,10 @@ class ProfileCardAlignment extends StatelessWidget {
   void share(){}
   void goDiscuss(BuildContext context){
     goDetail(context);
+  }
+
+  void goBookInfo(BuildContext context){
+    Routes.router.navigateTo(context, '/bookInfoPage?bookId='+exploreModel.bookId,transition: TransitionType.fadeIn);
   }
 }
 

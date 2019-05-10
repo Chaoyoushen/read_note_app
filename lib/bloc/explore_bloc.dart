@@ -19,7 +19,7 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
       yield LoadExplore(model: model.exploreViewList[0]);
       return;
     }
-    if(event is changeEvent){
+    if(event is ChangeEvent){
       ExploreModel model = (currentState as LoadExplore).model;
       if(model.likeFlag != 1){
         model.likeFlag = 1;

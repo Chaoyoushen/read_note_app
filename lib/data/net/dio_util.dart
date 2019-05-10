@@ -4,11 +4,11 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:readnote/common/local_storage.dart';
 import 'package:readnote/common/routes.dart';
 import 'package:readnote/models/book_info_model.dart';
 import 'package:readnote/models/explore_list_model.dart';
-import 'package:readnote/models/explore_model.dart';
 import 'package:readnote/models/image_result.dart';
 import 'package:readnote/models/login_model.dart';
 import 'package:readnote/models/note_detail_model.dart';
@@ -16,17 +16,22 @@ import 'package:readnote/models/note_model.dart';
 import 'package:readnote/models/result_model.dart';
 import 'package:readnote/res/constres.dart';
 import 'package:readnote/utils/notice_util.dart';
+import 'package:readnote/utils/utils.dart';
+import 'package:uuid/uuid.dart';
 
 
 class DioUtil {
   static final debug = false;
   static BuildContext context;
   /// 服务器路径
-  static final host = 'http://192.168.2.13:7002';
+  ///static final host = 'http://132.232.86.173:7002';
+  static final host = 'http://192.168.2.9:7002';
   ///调用api资源
   static final baiduHost = 'https://aip.baidubce.com/rest/2.0/ocr/v1';
   ///用户向服务请求识别某张图中的所有文字,通用文字识别
   static final generalBasic = '/general_basic';
+  ///图片路径
+  static final imagePath = 'http://isbn.szmesoft.com/ISBN/GetBookPhoto?ID=';
 
   static Options _option;
   static Dio _dio = new Dio();
@@ -44,6 +49,25 @@ class DioUtil {
     return _option;
   }
 
+  static Future<Image> getBookImage(String imgPath)async{
+    try{
+      print(imagePath+imgPath);
+      var tempDir = await getTemporaryDirectory();
+      Uuid uuid = new Uuid();
+      String path = tempDir.path+'/'+uuid.v1()+'.jpg';
+      print(path);
+      final Response response = await _dio.download(imagePath+imgPath, path);
+      if(response == null){
+        NoticeUtil.buildToast("no such image");
+        return Image.asset(Utils.getImgPath('default_book_image'));
+      }
+      return Image.file(File(path));
+    }catch(e){
+      print('catch exception');
+      NoticeUtil.buildToast("some thing wrong with net");
+      return Image.asset(Utils.getImgPath('default_book_image'));
+    }
+  }
 
 
 
@@ -66,6 +90,33 @@ class DioUtil {
       if(model.code == 200){
         Map tmp = model.data;
         print('tmp='+tmp.toString());
+        BookInfoModel book = BookInfoModel.fromJson(tmp['book']);
+        if(book.isbn == ''||book.isbn == null){
+          return null;
+        }else{
+          return book;
+        }
+      }else{
+        if(!tokenExpireFlag(model)){
+          NoticeUtil.buildToast("unknow error");
+        }
+        return null;
+      }
+    }catch(e){
+      NoticeUtil.buildToast("some thing wrong with net");
+      return null;
+    }
+  }
+
+  static Future<BookInfoModel> getBookByBookId(String bookId)async{
+
+    try{
+      String path = host+'/search/bookId?bookId=';
+      final Response response = await _dio.get(path+bookId,options: getOption());
+      print(response.data);
+      ResultModel model = ResultModel.fromJson(response.data);
+      if(model.code == 200){
+        Map tmp = model.data;
         BookInfoModel book = BookInfoModel.fromJson(tmp['book']);
         if(book.isbn == ''||book.isbn == null){
           return null;
