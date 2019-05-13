@@ -1,5 +1,7 @@
 import 'package:async/async.dart';
+import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:readnote/common/routes.dart';
 import 'package:readnote/data/net/dio_util.dart';
 import 'package:readnote/models/discuss_model.dart';
 import 'package:readnote/models/explore_model.dart';
@@ -76,6 +78,18 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
           ),
         ),
         centerTitle: true,
+        actions: <Widget>[
+          MaterialButton(
+            onPressed: (){doCollection();},
+            child: Text(
+              '收藏',
+              style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 20
+              ),
+            ),
+          )
+        ],
       ),
       body: _exploreModel == null?Center(child: CircularProgressIndicator()):_buildListView(context)
         );
@@ -103,7 +117,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                             decoration: new BoxDecoration(
                               color: Colors.white,
                               image: DecorationImage(
-                                  image: ExactAssetImage(Utils.getImgPath('guide1')),
+                                  image: ExactAssetImage(Utils.getImgPath('header')),
                                   fit: BoxFit.cover),
                               shape: BoxShape.rectangle,
                               borderRadius: new BorderRadius.all(
@@ -155,7 +169,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                               height: 20,
                               child: OutlineButton(
                                 padding: EdgeInsets.only(left: 8),
-                                onPressed: () {},
+                                onPressed: () {goBookInfo(context);},
                                 splashColor: Colors.blue,
                                 highlightedBorderColor: Colors.blue,
                                 child: Text(
@@ -286,7 +300,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                           margin: EdgeInsets.only(right: 8),
                           decoration: new BoxDecoration(
                             color: Colors.white,
-                            image: DecorationImage(image: ExactAssetImage(Utils.getImgPath('guide1')),fit: BoxFit.cover),
+                            image: DecorationImage(image: ExactAssetImage(Utils.getImgPath('header')),fit: BoxFit.cover),
                             shape: BoxShape.rectangle,
                             borderRadius: new BorderRadius.all(
                               const Radius.circular(5.0),
@@ -343,5 +357,13 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
         ),
       ),
     );
+  }
+
+  void goBookInfo(BuildContext context){
+    Routes.router.navigateTo(context, '/bookInfoPage?bookId='+_exploreModel.bookId,transition: TransitionType.fadeIn);
+  }
+
+  void doCollection(){
+
   }
 }

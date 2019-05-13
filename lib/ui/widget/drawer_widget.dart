@@ -1,3 +1,4 @@
+import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:readnote/common/local_storage.dart';
 import 'package:readnote/common/routes.dart';
@@ -20,8 +21,15 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             padding: EdgeInsets.all(0),
             children: <Widget>[
               UserAccountsDrawerHeader(
-                accountEmail: Text('mathcnaaa@gmail.com'),
-                accountName: Text(LocalStorage.getObject(ConstRes.USER_NAME_KEY)),
+                accountName: Padding(
+                    padding: EdgeInsets.only(left: 16,bottom: 8),
+                  child: Text(
+                    LocalStorage.getObject(ConstRes.USER_NAME_KEY),
+                    style: TextStyle(
+                        fontSize: 28
+                    ),
+                  ),
+                ),
                 currentAccountPicture: CircleAvatar(
                   backgroundImage: AssetImage(
                       Utils.getImgPath('header')
@@ -31,7 +39,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   image: DecorationImage(
                     fit: BoxFit.cover,
                     image: AssetImage(
-                      Utils.getImgPath('header')
+                      Utils.getImgPath('launch')
                     ) 
                   )
                 ),
@@ -39,18 +47,18 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               ListTile(
                 title: Text('基础设置'),
                 trailing: Icon(Icons.settings),
-                onTap: (){},
+                onTap: (){Routes.router.navigateTo(context, '/settingPage',transition: TransitionType.inFromRight);},
               ),
-              ListTile(
-                title: Text('消息通知'),
-                trailing: Icon(Icons.notifications_none),
-                onTap: (){},
-              ),
-              ListTile(
-                title: Text('关于我们'),
-                trailing: Icon(Icons.feedback),
-                onTap: (){},
-              ),
+//              ListTile(
+//                title: Text('消息通知'),
+//                trailing: Icon(Icons.notifications_none),
+//                onTap: (){},
+//              ),
+//              ListTile(
+//                title: Text('关于我们'),
+//                trailing: Icon(Icons.feedback),
+//                onTap: (){},
+//              ),
               Divider(),
               ListTile(
                 title: Text('注销'),

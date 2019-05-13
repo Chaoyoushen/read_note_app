@@ -15,7 +15,8 @@ class Routes {
   static String _selectBookPage = '/selectBookPage';
   static String _checkNotePage = '/checkNotePage';
   static String _noteDetailPage = '/noteDetailPage';
-  static String _book_info_page = '/bookInfoPage';
+  static String _bookInfoPage = '/bookInfoPage';
+  static String _settingPage = '/settingPage';
 
   static void configureRoutes(Router router) {
     router.notFoundHandler = Handler(
@@ -65,8 +66,12 @@ class Routes {
         handler: checkNoteHandler
     );
     router.define(
-        _book_info_page,
+        _bookInfoPage,
         handler: bookInfoHandler
+    );
+    router.define(
+        _settingPage,
+        handler: settingHandler
     );
 
   }

@@ -34,7 +34,7 @@ class _MinePageState extends State<MinePage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text('我的书架'),
+                          Text('我的收藏'),
                           SizedBox(
                             height: 18,
                             width: 70,
@@ -51,50 +51,7 @@ class _MinePageState extends State<MinePage> {
                           )
                         ],
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          GestureDetector(
-                              onTap: () {},
-                              child: Column(
-                                children: <Widget>[
-                                  Image.asset(
-                                    Utils.getImgPath('guide1'),
-                                    height: 130,
-                                    width: 93,
-                                    fit: BoxFit.fitWidth,
-                                  ),
-                                  Text('111')
-                                ],
-                              )),
-                          GestureDetector(
-                              onTap: () {},
-                              child: Column(
-                                children: <Widget>[
-                                  Image.asset(
-                                    Utils.getImgPath('guide1'),
-                                    height: 130,
-                                    width: 93,
-                                    fit: BoxFit.fitWidth,
-                                  ),
-                                  Text('111')
-                                ],
-                              )),
-                          GestureDetector(
-                              onTap: () {},
-                              child: Column(
-                                children: <Widget>[
-                                  Image.asset(
-                                    Utils.getImgPath('guide1'),
-                                    height: 130,
-                                    width: 93,
-                                    fit: BoxFit.fitWidth,
-                                  ),
-                                  Text('111')
-                                ],
-                              )),
-                        ],
-                      )
+
                     ],
                   ),
                 )),
@@ -160,5 +117,52 @@ class _MinePageState extends State<MinePage> {
       //DateTime date = DateTime.fromMillisecondsSinceEpoch(int.parse(model.exploreViewList.first.createDate));
       //print(date);
       Routes.router.navigateTo(context, '/noteDetailPage?noteId=',transition: TransitionType.inFromBottom);
+    }
+
+    Widget buildCollection(){
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          GestureDetector(
+              onTap: () {},
+              child: Column(
+                children: <Widget>[
+                  Image.asset(
+                    Utils.getImgPath('guide1'),
+                    height: 130,
+                    width: 93,
+                    fit: BoxFit.fitWidth,
+                  ),
+                  Text('111')
+                ],
+              )),
+          GestureDetector(
+              onTap: () {},
+              child: Column(
+                children: <Widget>[
+                  Image.asset(
+                    Utils.getImgPath('guide1'),
+                    height: 130,
+                    width: 93,
+                    fit: BoxFit.fitWidth,
+                  ),
+                  Text('111')
+                ],
+              )),
+          GestureDetector(
+              onTap: () {},
+              child: Column(
+                children: <Widget>[
+                  Image.asset(
+                    Utils.getImgPath('guide1'),
+                    height: 130,
+                    width: 93,
+                    fit: BoxFit.fitWidth,
+                  ),
+                  Text('111')
+                ],
+              )),
+        ],
+      );
     }
 }

@@ -25,7 +25,7 @@ class DioUtil {
   static BuildContext context;
   /// 服务器路径
   ///static final host = 'http://132.232.86.173:7002';
-  static final host = 'http://192.168.2.9:7002';
+  static final host = 'http://192.168.2.7:7002';
   ///调用api资源
   static final baiduHost = 'https://aip.baidubce.com/rest/2.0/ocr/v1';
   ///用户向服务请求识别某张图中的所有文字,通用文字识别
@@ -49,9 +49,25 @@ class DioUtil {
     return _option;
   }
 
+  static Future<bool> changeName(String newName)async{
+    try{
+      String path = host + '/user/changeName?newName='+newName;
+      final Response response = await _dio.get(path,options: getOption());
+      print(response.data);
+      ResultModel model = ResultModel.fromJson(response.data);
+      if(model.code == 200) {
+        NoticeUtil.buildToast("change success");
+        return true;
+      }
+      return false;
+    }catch(e){
+      NoticeUtil.buildToast("some thing wrong with net");
+      return false;
+    }
+  }
+
   static Future<Image> getBookImage(String imgPath)async{
     try{
-      print(imagePath+imgPath);
       var tempDir = await getTemporaryDirectory();
       Uuid uuid = new Uuid();
       String path = tempDir.path+'/'+uuid.v1()+'.jpg';
@@ -63,7 +79,6 @@ class DioUtil {
       }
       return Image.file(File(path));
     }catch(e){
-      print('catch exception');
       NoticeUtil.buildToast("some thing wrong with net");
       return Image.asset(Utils.getImgPath('default_book_image'));
     }

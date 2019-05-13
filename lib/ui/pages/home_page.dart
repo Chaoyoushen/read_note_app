@@ -59,13 +59,13 @@ class _HomePageState extends State<HomePage> {
           )),
           title: Text(IntlUtil.getString(context, Ids.homeTitle)),
           centerTitle: true,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {},
-              color: Colors.black,
-            )
-          ],
+//          actions: <Widget>[
+//            IconButton(
+//              icon: Icon(Icons.search),
+//              onPressed: () {},
+//              color: Colors.black,
+//            )
+//          ],
         ),
             drawer: DrawerWidget(),
             body: pages[_pageIndex],

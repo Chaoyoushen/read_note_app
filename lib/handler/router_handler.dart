@@ -7,6 +7,7 @@ import 'package:readnote/ui/pages/home_page.dart';
 import 'package:readnote/ui/pages/login_page.dart';
 import 'package:readnote/ui/pages/note_detail_page.dart';
 import 'package:readnote/ui/pages/select_book_page.dart';
+import 'package:readnote/ui/pages/setting_page.dart';
 import 'package:readnote/ui/pages/splash_page.dart';
 import 'package:readnote/ui/pages/register_page.dart';
 import 'package:readnote/ui/pages/camera_page.dart';
@@ -91,5 +92,11 @@ var bookInfoHandler = Handler(
       return BookInfoPage(
           bookId
       );
+    }
+);
+
+var settingHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String,List<String>> params){
+      return SettingPage();
     }
 );
