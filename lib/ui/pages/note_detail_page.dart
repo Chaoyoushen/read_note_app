@@ -23,10 +23,13 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
   final String noteId;
   ExploreModel _exploreModel;
   List<DiscussModel> _list;
+  Map iconMap = {'1':0xe7e1,'0':0xe7ec};
+  var icon;
 
   @override
   void initState() {
     controller = new TextEditingController();
+    icon=iconMap['1'];
     getData(0);
     super.initState();
   }
@@ -41,6 +44,11 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
        setState(() {
          if(_exploreModel == null){
            _exploreModel = model.exploreModel;
+           if(_exploreModel.collectionFlag ==0){
+             icon = iconMap['0'];
+           }else{
+             icon = iconMap['1'];
+           }
          }
          _list = model.discussList;
        });
@@ -50,9 +58,9 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
       }
     }
 
-    void likeDiscuss(DiscussModel model){
-      print(model.likeNum);
-      print(model.nickname);
+    void likeDiscuss(DiscussModel model)async{
+      await DioUtil.likeDiscuss(model.discussId);
+      await getData(1);
     }
 
 
@@ -79,16 +87,11 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
         ),
         centerTitle: true,
         actions: <Widget>[
-          MaterialButton(
-            onPressed: (){doCollection();},
-            child: Text(
-              '收藏',
-              style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 20
-              ),
-            ),
-          )
+          IconButton(
+              icon: Icon(
+                  IconData(iconMap['0'],fontFamily: 'iconfont'),
+                color: Colors.blue,
+          ), onPressed: (){doCollection();})
         ],
       ),
       body: _exploreModel == null?Center(child: CircularProgressIndicator()):_buildListView(context)
@@ -259,10 +262,10 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
           }
       );
       await DioUtil.makeDiscuss(noteId, controller.text);
-      Navigator.pop(context);
       controller.text = '';
+      await getData(1);
+      Navigator.pop(context);
       NoticeUtil.buildToast('discuss success');
-      getData(1);
     }
 
   }
@@ -363,7 +366,40 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
     Routes.router.navigateTo(context, '/bookInfoPage?bookId='+_exploreModel.bookId,transition: TransitionType.fadeIn);
   }
 
-  void doCollection(){
+  void doCollection()async{
+    showDialog<Null>(
+        context: context, //BuildContext对象
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return new LoadingDialog( //调用对话框
+            text: '请稍等...',
+          );
+        }
+    );
+    bool flag = await DioUtil.doCollection(_exploreModel.noteId);
+    if(_exploreModel.collectionFlag!=0){
+      if(flag){
+        Navigator.pop(context);
+        NoticeUtil.buildToast('collection success');
+        setState(() {
+          icon=iconMap['0'];
+        });
+      }else{
+        Navigator.pop(context);
+        NoticeUtil.buildToast('collection failed');
+      }
+    }else{
+      if(flag){
+        Navigator.pop(context);
+        NoticeUtil.buildToast('collection canceled');
+        setState(() {
+          icon=iconMap['1'];
+        });
+      }else{
+        Navigator.pop(context);
+        NoticeUtil.buildToast('canceled failed');
+      }
+    }
 
   }
 }

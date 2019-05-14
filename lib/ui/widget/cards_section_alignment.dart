@@ -43,7 +43,7 @@ class _CardsSectionState extends State<CardsSectionAlignment> with SingleTickerP
   Alignment frontCardAlign;
   double frontCardRot = 0.0;
   bool initComplete = false;
-  ExploreModel defaultModel = ExploreModel('', '', '', '', '', '', '0', 0, '', 0, '', '', 0, 0,0);
+  ExploreModel defaultModel = ExploreModel('', '', '', '', '', '', '0', 0, '', 0, '', '', 0, 0,0,0);
   ProfileCardAlignment nextCard;
 
   @override
@@ -54,7 +54,6 @@ class _CardsSectionState extends State<CardsSectionAlignment> with SingleTickerP
     super.initState();
     frontCardAlign = cardsAlign[2];
 
-    // Init the animation controller
     _controller = new AnimationController(duration: new Duration(milliseconds: 700), vsync: this);
     _controller.addListener(() => setState(() {}));
     _controller.addStatusListener((AnimationStatus status)

@@ -8,9 +8,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:readnote/common/local_storage.dart';
 import 'package:readnote/common/routes.dart';
 import 'package:readnote/models/book_info_model.dart';
+import 'package:readnote/models/collection_list_model.dart';
 import 'package:readnote/models/explore_list_model.dart';
 import 'package:readnote/models/image_result.dart';
 import 'package:readnote/models/login_model.dart';
+import 'package:readnote/models/my_note_list_model.dart';
 import 'package:readnote/models/note_detail_model.dart';
 import 'package:readnote/models/note_model.dart';
 import 'package:readnote/models/result_model.dart';
@@ -25,7 +27,7 @@ class DioUtil {
   static BuildContext context;
   /// 服务器路径
   ///static final host = 'http://132.232.86.173:7002';
-  static final host = 'http://192.168.2.7:7002';
+  static final host = 'http://192.168.2.9:7002';
   ///调用api资源
   static final baiduHost = 'https://aip.baidubce.com/rest/2.0/ocr/v1';
   ///用户向服务请求识别某张图中的所有文字,通用文字识别
@@ -35,7 +37,6 @@ class DioUtil {
 
   static Options _option;
   static Dio _dio = new Dio();
-  static final LogicError unknowError = LogicError(-1, "未知异常");
 
 
 
@@ -47,6 +48,90 @@ class DioUtil {
     _option.headers.addAll({'token':token});
     _option.connectTimeout = 10000;
     return _option;
+  }
+
+  static Future<CollectionListModel> getCollectionOverview()async{
+    try {
+      String path = host + '/user/collectionOverview';
+      final Response response = await _dio.get(path, options: getOption());
+      ResultModel model = ResultModel.fromJson(response.data);
+      if (model.code == 200) {
+        Map tmp = model.data;
+        List list = tmp['list'];
+        CollectionListModel collectionList = CollectionListModel.fromJson(tmp);
+        return collectionList;
+      }
+    }catch(e){
+      NoticeUtil.buildToast("some thing wrong with net");
+      return null;
+    }
+  }
+
+  static Future<bool> doCollection(String noteId)async{
+    try {
+      String path = host + '/user/collection?noteId=';
+      final Response response = await _dio.get(path+noteId, options: getOption());
+      ResultModel model = ResultModel.fromJson(response.data);
+      if (model.code == 200) {
+        return true;
+      }
+      return false;
+    }catch(e){
+      NoticeUtil.buildToast("some thing wrong with net");
+      return false;
+    }
+  }
+
+  static Future<MyNoteListModel> getNoteListByBook(String bookId)async {
+    try {
+      String path = host + '/note/list?bookId=';
+      final Response response = await _dio.get(path+bookId, options: getOption());
+      ResultModel model = ResultModel.fromJson(response.data);
+      if (model.code == 200) {
+        Map tmp = model.data;
+        List list = tmp['list'];
+        MyNoteListModel noteList = MyNoteListModel.fromJson(tmp);
+        return noteList;
+      }
+    } catch (e) {
+      NoticeUtil.buildToast("some thing wrong with net");
+      return null;
+    }
+  }
+
+  static Future<MyNoteListModel> getCollectionList()async {
+    try {
+      String path = host + '/user/collection/list';
+      final Response response = await _dio.get(path, options: getOption());
+      ResultModel model = ResultModel.fromJson(response.data);
+      if (model.code == 200) {
+        Map tmp = model.data;
+        List list = tmp['list'];
+        MyNoteListModel noteList = MyNoteListModel.fromJson(tmp);
+        return noteList;
+      }
+    } catch (e) {
+      NoticeUtil.buildToast("some thing wrong with net");
+      return null;
+    }
+  }
+
+  static Future<MyNoteListModel> getNoteList()async{
+    try {
+      String path = host + '/user/noteOverview';
+      final Response response = await _dio.get(path, options: getOption());
+      ResultModel model = ResultModel.fromJson(response.data);
+      if (model.code == 200) {
+        Map tmp = model.data;
+        List list = tmp['list'];
+        MyNoteListModel noteList = MyNoteListModel.fromJson(tmp);
+        return noteList;
+      }
+    }catch(e){
+      NoticeUtil.buildToast("some thing wrong with net");
+      return null;
+    }
+
   }
 
   static Future<bool> changeName(String newName)async{
@@ -324,6 +409,21 @@ class DioUtil {
     return null;
   }
 
+  static Future<bool> deleteNote(String noteId)async{
+    try{
+      String path = host + '/note/delete?';
+      Response response = await _dio.get(path+'noteId=$noteId',options: getOption());
+      ResultModel model = ResultModel.fromJson(response.data);
+      if(model.code == 200){
+        return true;
+      }
+      return false;
+    }catch(e){
+      return false;
+    }
+
+  }
+
   static Future<bool> makeDiscuss(String noteId,String discuss)async{
     try{
       String path = host + '/note/discuss/add';
@@ -410,13 +510,3 @@ class DioUtil {
 }
 
 
-/// 统一异常类
-class LogicError {
-  int errorCode;
-  String msg;
-
-  LogicError(errorCode, msg) {
-    this.errorCode = errorCode;
-    this.msg = msg;
-  }
-}

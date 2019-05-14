@@ -16,13 +16,14 @@ class ExploreModel{
   final int readNum;
   int likeNum;
   final int discussNum;
-  final int sharedNum;
+  final int collectionNum;
   final String note;
   final String page;
   int likeFlag;
+  int collectionFlag;
   ExploreModel(
       this.digest,this.userId,this.page,this.bookName,this.note,this.bookId,this.createDate,
-      this.discussNum,this.imgPath,this.likeNum,this.nickname,this.noteId,this.sharedNum,this.readNum,this.likeFlag);
+      this.discussNum,this.imgPath,this.likeNum,this.nickname,this.noteId,this.collectionNum,this.readNum,this.likeFlag,this.collectionFlag);
 
   factory ExploreModel.fromJson(Map<String, dynamic> json) => _$ExploreModelFromJson(json);
 

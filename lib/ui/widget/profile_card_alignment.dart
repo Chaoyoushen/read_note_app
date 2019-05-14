@@ -4,6 +4,8 @@ import 'package:readnote/common/routes.dart';
 import 'package:readnote/data/net/dio_util.dart';
 import 'package:readnote/models/explore_list_model.dart';
 import 'package:readnote/models/explore_model.dart';
+import 'package:readnote/ui/widget/loading_dialog.dart';
+import 'package:readnote/utils/notice_util.dart';
 import 'package:readnote/utils/utils.dart';
 
 
@@ -31,7 +33,7 @@ class ProfileCardAlignment extends StatelessWidget {
                     margin: EdgeInsets.only(right: 8),
                     decoration: new BoxDecoration(
                       color: Colors.white,
-                      image: DecorationImage(image: ExactAssetImage(Utils.getImgPath('guide1')),fit: BoxFit.cover),
+                      image: DecorationImage(image: ExactAssetImage(Utils.getImgPath('header')),fit: BoxFit.cover),
                       shape: BoxShape.rectangle,
                       borderRadius: new BorderRadius.all(
                         const Radius.circular(5.0),
@@ -129,10 +131,10 @@ class ProfileCardAlignment extends StatelessWidget {
                     child: Row(
                       children: <Widget>[
                         IconButton(
-                          icon: Icon(IconData(0xe6f3,fontFamily: 'iconfont'),color: Colors.black),
-                          onPressed: (){share();},
+                          icon: Icon(IconData(0xe7e1,fontFamily: 'iconfont'),color: Colors.black),
+                          onPressed: (){goDetail(context);},
                         ),
-                        Text(exploreModel.sharedNum.toString())
+                        Text(exploreModel.collectionNum.toString())
                       ],
                     ),
                   ),
@@ -153,7 +155,7 @@ class ProfileCardAlignment extends StatelessWidget {
                         IconButton(
                           icon: exploreModel.likeFlag == 1?Icon(IconData(0xe668,fontFamily: 'iconfont'),color: Colors.red)
                               :Icon(IconData(0xe669,fontFamily: 'iconfont'),color: Colors.red),
-                          onPressed: (){addLike();},
+                          onPressed: (){mannerLike(context);},
                         ),
                         Text(exploreModel.likeNum.toString())
                       ],
@@ -172,10 +174,19 @@ class ProfileCardAlignment extends StatelessWidget {
     Routes.router.navigateTo(context, '/noteDetailPage?noteId='+exploreModel.noteId,transition: TransitionType.fadeIn);
   }
 
-  void addLike(){
-
+  void mannerLike(BuildContext context){
+    showDialog<Null>(
+        context: context, //BuildContext对象
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return new LoadingDialog( //调用对话框
+            text: '正在注销...',
+          );
+        });
+    DioUtil.likeNote(exploreModel.noteId);
+    Navigator.pop(context);
+    NoticeUtil.buildToast('success');
   }
-  void share(){}
   void goDiscuss(BuildContext context){
     goDetail(context);
   }

@@ -1,44 +1,29 @@
-import 'dart:io';
-
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:readnote/common/routes.dart';
 import 'package:readnote/data/net/dio_util.dart';
-import 'package:readnote/models/book_info_model.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:readnote/models/my_note_list_model.dart';
 import 'package:readnote/models/my_note_model.dart';
+import 'package:readnote/ui/widget/loading_dialog.dart';
 import 'package:readnote/utils/notice_util.dart';
-import 'package:readnote/utils/utils.dart';
 
-class BookInfoPage extends StatefulWidget {
-  final String bookId;
-  BookInfoPage(this.bookId);
+class MyNoteListPage extends StatefulWidget {
   @override
-  _BookInfoPageState createState() => _BookInfoPageState(bookId);
+  _MyNoteListPageState createState() => _MyNoteListPageState();
 }
 
-class _BookInfoPageState extends State<BookInfoPage> {
-  BookInfoModel _model;
-  String bookId;
+class _MyNoteListPageState extends State<MyNoteListPage> {
   MyNoteListModel _noteList;
-  int num;
-  _BookInfoPageState(this.bookId);
+
   @override
   void initState() {
-    setModel(bookId);
+    initCollectionList();
     super.initState();
   }
 
-  setModel(String bookId)async{
-    _model = await DioUtil.getBookByBookId(bookId);
-    _noteList = await DioUtil.getNoteListByBook(bookId);
+  void initCollectionList()async{
+    _noteList = await DioUtil.getNoteList();
     setState(() {
-      if(_noteList.list!=null){
-        num = _noteList.list.length;
-      }else{
-        num = 0;
-      }
 
     });
   }
@@ -46,7 +31,7 @@ class _BookInfoPageState extends State<BookInfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  AppBar(
+      appBar: AppBar(
         leading: IconButton(
             icon: Icon(
               IconData(0xe679, fontFamily: 'iconfont'),
@@ -57,66 +42,14 @@ class _BookInfoPageState extends State<BookInfoPage> {
         elevation: 0,
         backgroundColor: Colors.white,
         title: Text(
-          '书籍详情',
+          '笔记详情',
           style: TextStyle(
               color: Colors.black
           ),
         ),
         centerTitle: true,
       ),
-      body: _model == null?Center(child: CircularProgressIndicator()):_buildListView(context),
-    );
-  }
-
-  Widget _buildListView(BuildContext context){
-    return ListView(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        children: <Widget>[
-          Container(
-              height: 120,
-              child: Row(
-                children: <Widget>[
-                  CachedNetworkImage(
-                  imageUrl: DioUtil.imagePath+_model.photoUrl,
-                  placeholder: (context, url) => Image.asset(Utils.getImgPath('default_book_image')),
-                  errorWidget: (context, url, error) => new Icon(Icons.error),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 16,top: 8,bottom: 8),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          child: Column(
-                            children: <Widget>[
-                              Text(
-                                _model.bookName,
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w800
-                                ),
-                              ),
-                              Text(
-                                  _model.author
-                              ),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          '共$num条笔记',
-                          textAlign: TextAlign.start,
-
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-          Divider(),
-          _buildCollectionView(_noteList.list)
-        ]
+      body: _noteList == null?Center(child: CircularProgressIndicator()):_buildCollectionView(_noteList.list),
     );
   }
 
@@ -126,8 +59,6 @@ class _BookInfoPageState extends State<BookInfoPage> {
     }
     return ListView.builder(
       itemCount: list.length,
-      physics:NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
       itemBuilder: (context, index) => _itemBuilder(context, index, list),
     );
   }
@@ -135,6 +66,28 @@ class _BookInfoPageState extends State<BookInfoPage> {
   Widget _itemBuilder(BuildContext context, int index,List<MyNoteModel> list) {
     return GestureDetector(
         onTap: (){goDetail(context,list[index].noteId);},
+        onLongPress: (){
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('提示'),
+              content: Text(('是否删除该书摘')),
+              actions: <Widget>[
+                new FlatButton(
+                  child: new Text("取消"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                new FlatButton(
+                  child: new Text("确定"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    deleteNote(list[index].noteId,index);
+                  },
+                ),
+              ],
+            ));},
         child:Card(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -193,5 +146,26 @@ class _BookInfoPageState extends State<BookInfoPage> {
   void goDetail(BuildContext context,String noteId){
     Routes.router.navigateTo(context, '/noteDetailPage?noteId='+noteId,transition: TransitionType.fadeIn);
   }
-
+  void deleteNote(String noteId,int index)async{
+    showDialog<Null>(
+        context: context, //BuildContext对象
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return new LoadingDialog( //调用对话框
+            text: '正在删除...',
+          );
+        }
+    );
+    bool flag = await DioUtil.deleteNote(noteId);
+    if(flag){
+      Navigator.pop(context);
+      NoticeUtil.buildToast('delete success');
+    }else{
+      Navigator.pop(context);
+      NoticeUtil.buildToast('delete failed');
+    }
+    setState(() {
+      _noteList.list.removeAt(index);
+    });
+  }
 }

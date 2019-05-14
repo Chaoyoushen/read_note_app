@@ -20,9 +20,10 @@ ExploreModel _$ExploreModelFromJson(Map<String, dynamic> json) {
       json['likeNum'] as int,
       json['nickname'] as String,
       json['noteId'] as String,
-      json['sharedNum'] as int,
+      json['collectionNum'] as int,
       json['readNum'] as int,
-      json['likeFlag'] as int);
+      json['likeFlag'] as int,
+      json['collectionFlag'] as int);
 }
 
 Map<String, dynamic> _$ExploreModelToJson(ExploreModel instance) =>
@@ -38,8 +39,9 @@ Map<String, dynamic> _$ExploreModelToJson(ExploreModel instance) =>
       'readNum': instance.readNum,
       'likeNum': instance.likeNum,
       'discussNum': instance.discussNum,
-      'sharedNum': instance.sharedNum,
+      'collectionNum': instance.collectionNum,
       'note': instance.note,
       'page': instance.page,
-      'likeFlag': instance.likeFlag
+      'likeFlag': instance.likeFlag,
+      'collectionFlag': instance.collectionFlag
     };

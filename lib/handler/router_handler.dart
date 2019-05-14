@@ -2,10 +2,12 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:readnote/ui/pages/book_info_page.dart';
 import 'package:readnote/ui/pages/check_note_page.dart';
+import 'package:readnote/ui/pages/collection_list_page.dart';
 import 'package:readnote/ui/pages/digest_page.dart';
 import 'package:readnote/ui/pages/home_page.dart';
 import 'package:readnote/ui/pages/login_page.dart';
 import 'package:readnote/ui/pages/note_detail_page.dart';
+import 'package:readnote/ui/pages/note_list_page.dart';
 import 'package:readnote/ui/pages/select_book_page.dart';
 import 'package:readnote/ui/pages/setting_page.dart';
 import 'package:readnote/ui/pages/splash_page.dart';
@@ -98,5 +100,17 @@ var bookInfoHandler = Handler(
 var settingHandler = Handler(
     handlerFunc: (BuildContext context, Map<String,List<String>> params){
       return SettingPage();
+    }
+);
+
+var collectionListHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String,List<String>> params){
+      return CollectionListPage();
+    }
+);
+
+var myNoteListHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String,List<String>> params){
+      return MyNoteListPage();
     }
 );

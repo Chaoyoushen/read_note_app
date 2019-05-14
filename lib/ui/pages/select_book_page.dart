@@ -52,6 +52,7 @@ class _SelectBookPageState extends State<SelectBookPage> {
     return TextField(
       cursorColor: Color(0xFFAD9A87),
       controller: _controller,
+      enabled: false,
       decoration: InputDecoration(
         icon: Icon(
             Icons.search,
