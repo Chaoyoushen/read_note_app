@@ -9,5 +9,5 @@ class ConstRes{
 
 
   ///access_token
-  static const BAIDUAI_TOKEN = "24.d3dd5dc4d28134a495aa577e2350a2d7.2592000.1558596524.282335-16090120";
+  static const BAIDUAI_TOKEN = "24.6550ba0eac1627c5e7acb1d53938a6c9.2592000.1561537482.282335-16090120";
 }

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:readnote/common/routes.dart';
@@ -8,7 +6,6 @@ import 'package:readnote/models/book_info_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:readnote/models/my_note_list_model.dart';
 import 'package:readnote/models/my_note_model.dart';
-import 'package:readnote/utils/notice_util.dart';
 import 'package:readnote/utils/utils.dart';
 
 class BookInfoPage extends StatefulWidget {
@@ -80,6 +77,7 @@ class _BookInfoPageState extends State<BookInfoPage> {
                   imageUrl: DioUtil.imagePath+_model.photoUrl,
                   placeholder: (context, url) => Image.asset(Utils.getImgPath('default_book_image')),
                   errorWidget: (context, url, error) => new Icon(Icons.error),
+                  fit: BoxFit.fill,
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 16,top: 8,bottom: 8),
@@ -88,17 +86,21 @@ class _BookInfoPageState extends State<BookInfoPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
+                          width: 200,
                           child: Column(
                             children: <Widget>[
                               Text(
                                 _model.bookName,
+                                maxLines: 2,
                                 style: TextStyle(
                                     fontSize: 20,
-                                    fontWeight: FontWeight.w800
+                                    fontWeight: FontWeight.w800,
                                 ),
                               ),
                               Text(
-                                  _model.author
+                                _model.author,
+                                maxLines: 2,
+                                textAlign: TextAlign.start,
                               ),
                             ],
                           ),

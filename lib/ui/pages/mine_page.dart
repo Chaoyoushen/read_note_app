@@ -144,15 +144,22 @@ class _MinePageState extends State<MinePage> {
                         imageUrl: DioUtil.imagePath+collectionList.list[0].photoUrl,
                         placeholder: (context, url) => Image.asset(Utils.getImgPath('default_book_image')),
                         errorWidget: (context, url, error) => new Icon(Icons.error),
+                        fit: BoxFit.fill,
                       ),
                     ),
                     SizedBox(
                       height: 10,
                     ),
-                    Text(
-                      collectionList.list[0].bookName,
-                      style: TextStyle(
-                          fontSize: 10
+                    SizedBox(
+                      height: 13,
+                      width: 93,
+                      child:Text(
+                        collectionList.list[0].bookName,
+                        style: TextStyle(
+                            fontSize: 10
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     )
                   ],
@@ -169,15 +176,22 @@ class _MinePageState extends State<MinePage> {
                         imageUrl: DioUtil.imagePath+collectionList.list[1].photoUrl,
                         placeholder: (context, url) => Image.asset(Utils.getImgPath('default_book_image')),
                         errorWidget: (context, url, error) => new Icon(Icons.error),
+                        fit: BoxFit.fill,
                       ),
                     ),
                     SizedBox(
                       height: 10,
                     ),
-                    Text(
-                      collectionList.list[1].bookName,
-                      style: TextStyle(
-                          fontSize: 10
+                    SizedBox(
+                      height: 13,
+                      width: 93,
+                      child:Text(
+                        collectionList.list[1].bookName,
+                        style: TextStyle(
+                            fontSize: 10
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     )
                   ],
@@ -194,15 +208,22 @@ class _MinePageState extends State<MinePage> {
                         imageUrl: DioUtil.imagePath+collectionList.list[2].photoUrl,
                         placeholder: (context, url) => Image.asset(Utils.getImgPath('default_book_image')),
                         errorWidget: (context, url, error) => new Icon(Icons.error),
+                        fit: BoxFit.fill,
                       ),
                     ),
                     SizedBox(
                       height: 10,
                     ),
-                    Text(
-                      collectionList.list[2].bookName,
-                      style: TextStyle(
-                          fontSize: 10
+                    SizedBox(
+                      height: 13,
+                      width: 93,
+                      child:Text(
+                        collectionList.list[2].bookName,
+                        style: TextStyle(
+                            fontSize: 10
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     )
                   ],
@@ -229,16 +250,23 @@ class _MinePageState extends State<MinePage> {
                         imageUrl: DioUtil.imagePath+collectionList.list[0].photoUrl,
                         placeholder: (context, url) => Image.asset(Utils.getImgPath('default_book_image')),
                         errorWidget: (context, url, error) => new Icon(Icons.error),
+                        fit: BoxFit.fill,
                       ),
                     ),
                     SizedBox(
                       height: 10,
                     ),
-                    Text(
-                      collectionList.list[0].bookName,
-                      style: TextStyle(
-                          fontSize: 10
-                      ),
+                    SizedBox(
+                      height: 13,
+                      width: 93,
+                      child:Text(
+                          collectionList.list[0].bookName,
+                          style: TextStyle(
+                              fontSize: 10
+                          ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                    ),
                     )
                   ],
                 )),
@@ -269,17 +297,24 @@ class _MinePageState extends State<MinePage> {
                         imageUrl: DioUtil.imagePath+collectionList.list[0].photoUrl,
                         placeholder: (context, url) => Image.asset(Utils.getImgPath('default_book_image')),
                         errorWidget: (context, url, error) => new Icon(Icons.error),
+                        fit: BoxFit.fill,
                       ),
                     ),
                     SizedBox(
                       height: 10,
                     ),
-                    Text(
-              collectionList.list[0].bookName,
-              style: TextStyle(
-                  fontSize: 10
-              ),
-            )
+                SizedBox(
+                  height: 13,
+                  width: 93,
+                  child:Text(
+                    collectionList.list[0].bookName,
+                    style: TextStyle(
+                        fontSize: 10
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                )
                   ],
                 )),
             GestureDetector(
@@ -294,15 +329,22 @@ class _MinePageState extends State<MinePage> {
                         imageUrl: DioUtil.imagePath+collectionList.list[1].photoUrl,
                         placeholder: (context, url) => Image.asset(Utils.getImgPath('default_book_image')),
                         errorWidget: (context, url, error) => new Icon(Icons.error),
+                        fit: BoxFit.fill,
                       ),
                     ),
                     SizedBox(
                       height: 10,
                     ),
-                    Text(
-                      collectionList.list[1].bookName,
-                      style: TextStyle(
-                          fontSize: 10
+                    SizedBox(
+                      height: 13,
+                      width: 93,
+                      child:Text(
+                        collectionList.list[1].bookName,
+                        style: TextStyle(
+                            fontSize: 10
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     )
                   ],

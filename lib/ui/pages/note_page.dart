@@ -87,7 +87,7 @@ class _NotePageState extends State<NotePage> {
         ),
         Padding(
           padding: EdgeInsets.only(top: 8,bottom: 8),
-              child: Text("笔记(选填)")
+              child: Text("笔记")
           ),
           TextField(
             maxLength:500,
@@ -124,7 +124,9 @@ class _NotePageState extends State<NotePage> {
                         width: 200,
                         child: Text(
                           _bookName,
-                          textAlign:TextAlign.right
+                          textAlign:TextAlign.right,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
                       ),
                       IconButton(

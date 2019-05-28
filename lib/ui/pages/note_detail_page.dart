@@ -89,7 +89,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
         actions: <Widget>[
           IconButton(
               icon: Icon(
-                  IconData(iconMap['0'],fontFamily: 'iconfont'),
+                  IconData(icon,fontFamily: 'iconfont'),
                 color: Colors.blue,
           ), onPressed: (){doCollection();})
         ],
@@ -176,7 +176,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                                 splashColor: Colors.blue,
                                 highlightedBorderColor: Colors.blue,
                                 child: Text(
-                                  _exploreModel.page + '/《' + _exploreModel.bookName +
+                                  '第'+_exploreModel.page+'页' + '/《' + _exploreModel.bookName +
                                       '》',
                                   style: TextStyle(
                                       fontSize: 12,
@@ -381,6 +381,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
       if(flag){
         Navigator.pop(context);
         NoticeUtil.buildToast('collection success');
+        _exploreModel.collectionFlag=0;
         setState(() {
           icon=iconMap['0'];
         });
@@ -392,6 +393,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
       if(flag){
         Navigator.pop(context);
         NoticeUtil.buildToast('collection canceled');
+        _exploreModel.collectionFlag=1;
         setState(() {
           icon=iconMap['1'];
         });

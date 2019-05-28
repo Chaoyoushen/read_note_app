@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:readnote/ui/widget/cards_section_alignment.dart';
+import 'package:readnote/ui/widget/card_section_alignment.dart';
 
 class ExplorePage extends StatefulWidget {
   @override

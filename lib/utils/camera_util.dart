@@ -30,15 +30,15 @@ class CameraUtil{
             text: '正在解析图片...',
           );
         });
-    var _path = await Luban.compressImage(
-      CompressObject(
-        imageFile: file,
-        path: file.path.substring(0,file.path.lastIndexOf('/')),
-        step: 9,
-        mode: CompressMode.LARGE2SMALL
-      )
-    );
-    var data = base64.encode(File(_path).readAsBytesSync());
+//    var _path = await Luban.compressImage(
+//      CompressObject(
+//        imageFile: file,
+//        path: file.path.substring(0,file.path.lastIndexOf('/')),
+//        step: 9,
+//        mode: CompressMode.LARGE2SMALL
+//      )
+//    );
+    var data = base64.encode(file.readAsBytesSync());
     ImageResult result = await DioUtil.getMessage(data);
     StringBuffer text = new StringBuffer();
     for (Map map in result.words_result) {

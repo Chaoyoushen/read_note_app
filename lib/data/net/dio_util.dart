@@ -27,7 +27,7 @@ class DioUtil {
   static BuildContext context;
   /// 服务器路径
   ///static final host = 'http://132.232.86.173:7002';
-  static final host = 'http://192.168.2.9:7002';
+  static final host = 'http://192.168.2.10:7002';
   ///调用api资源
   static final baiduHost = 'https://aip.baidubce.com/rest/2.0/ocr/v1';
   ///用户向服务请求识别某张图中的所有文字,通用文字识别
@@ -209,7 +209,6 @@ class DioUtil {
   }
 
   static Future<BookInfoModel> getBookByBookId(String bookId)async{
-
     try{
       String path = host+'/search/bookId?bookId=';
       final Response response = await _dio.get(path+bookId,options: getOption());
@@ -223,6 +222,33 @@ class DioUtil {
         }else{
           return book;
         }
+      }else{
+        if(!tokenExpireFlag(model)){
+          NoticeUtil.buildToast("unknow error");
+        }
+        return null;
+      }
+    }catch(e){
+      NoticeUtil.buildToast("some thing wrong with net");
+      return null;
+    }
+  }
+
+  static Future<List<BookInfoModel>> getBookByBookName(String key)async{
+    try{
+      String path = host+'/search/bookName';
+      final Response response = await _dio.post(
+          path,
+        data: key,
+        options: getOption()
+      );
+      print(response.data);
+      ResultModel model = ResultModel.fromJson(response.data);
+      if(model.code == 200){
+        List<BookInfoModel> result = new List<BookInfoModel>();
+        List tmp = model.data;
+        tmp.forEach((e){result.add(BookInfoModel.fromJson(e['book']));});
+        return result;
       }else{
         if(!tokenExpireFlag(model)){
           NoticeUtil.buildToast("unknow error");

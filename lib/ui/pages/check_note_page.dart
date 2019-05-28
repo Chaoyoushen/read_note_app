@@ -60,57 +60,51 @@ class _CheckNotePageState extends State<CheckNotePage> {
           )
         ],
       ),
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 22.0,vertical: 15.0),
-        height: 550,
-        width: 500,
-        child: Card(
-          color: Colors.white,
-          elevation: 2,
-          child:Padding(
-              padding: EdgeInsets.all(8.0),
-              child:Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                height: 100,
-                child: Text(
-                  _note.digest,
-                  textAlign: TextAlign.start,
-                  maxLines: 5,
-                  overflow: TextOverflow.ellipsis,
+      body: ListView(
+        children: <Widget>[
+          Card(
+              margin: EdgeInsets.all(8),
+              color: Colors.white,
+              elevation: 2,
+              child:Padding(
+                padding: EdgeInsets.all(22.0),
+                child:Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                        _note.digest,
+                        textAlign: TextAlign.start,
+                      ),
+                    SizedBox(
+                      height: 33,
+                    ),
+                    Divider(
+                      color: Colors.black,
+                    ),
+                    Text(
+                        _note.note,
+                        textAlign: TextAlign.start,
+                      ),
+                    SizedBox(
+                      height: 33,
+                    ),
+                    Divider(
+                      color: Colors.grey,
+                    ),
+                    Text(
+                        '第'+_note.page+'页/《'+_note.bookName+'》',
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: Colors.grey
+                        ),
+                      ),
+                  ],
                 ),
-              ),
-              Divider(
-                color: Colors.black,
-              ),
-              SizedBox(
-                height: 330,
-                child: Text(
-                  _note.note,
-                  maxLines: 15,
-                  textAlign: TextAlign.start,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Divider(
-                color: Colors.grey,
-              ),
-              SizedBox(
-                child: Text(
-                  '第'+_note.page+'页/《'+_note.bookName+'》',
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Colors.grey
-                  ),
-                ),
-              ),
-            ],
+              )
           ),
-          )
-        ),
+        ],
       )
     );
   }
